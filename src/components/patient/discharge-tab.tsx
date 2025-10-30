@@ -16,6 +16,7 @@ import { Bot, Loader2, Volume2, QrCode, Sparkles } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 import { PlaceHolderImages } from '@/lib/placeholder-images'
 import { AfternoonIcon, MorningIcon, NightIcon, WithFoodIcon } from '../icons'
+import DischargeReadinessChart from './discharge-readiness-chart'
 
 interface DischargeTabProps {
   patient: Patient
@@ -107,6 +108,15 @@ export default function DischargeTab({ patient }: DischargeTabProps) {
   const handleSelectChange = (value: string) => {
     setFormState({ ...formState, languagePreference: value })
   }
+  
+  const readinessData = [
+    { metric: 'Medication Plan Understood', score: 85, fullMark: 100 },
+    { metric: 'Vitals Stable', score: 90, fullMark: 100 },
+    { metric: 'Follow-up Scheduled', score: 100, fullMark: 100 },
+    { metric: 'Caregiver Prepared', score: 70, fullMark: 100 },
+    { metric: 'Red Flags Resolved', score: 80, fullMark: 100 },
+    { metric: 'Patient Confident', score: 75, fullMark: 100 },
+  ];
 
   return (
     <div className="grid gap-6 md:grid-cols-5">
@@ -154,78 +164,89 @@ export default function DischargeTab({ patient }: DischargeTabProps) {
         </CardContent>
       </Card>
 
-      <Card className="md:col-span-3">
-        <CardHeader>
-          <CardTitle>Discharge Summary Preview</CardTitle>
-          <CardDescription>The generated summary will appear here.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          {summary ? (
-            <div className="space-y-6">
-                <div className="prose prose-sm max-w-none text-foreground whitespace-pre-wrap">{summary}</div>
-                
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-base">Medication Plan</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                      <ul className="space-y-2 text-sm">
-                        {patient.medications.postDischarge.map(med => (
-                          <li key={med.id} className="flex justify-between items-center">
-                            <span>{med.name} ({med.dosage}) - {med.frequency}</span>
-                            <MedicationExplanationDialog medicationName={med.name} language={formState.languagePreference} />
-                          </li>
-                        ))}
-                      </ul>
-                  </CardContent>
-                </Card>
+      <div className="md:col-span-3 grid gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Discharge Summary Preview</CardTitle>
+            <CardDescription>The generated summary will appear here.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {summary ? (
+              <div className="space-y-6">
+                  <div className="prose prose-sm max-w-none text-foreground whitespace-pre-wrap">{summary}</div>
+                  
+                  <Card>
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-base">Medication Plan</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <ul className="space-y-2 text-sm">
+                          {patient.medications.postDischarge.map(med => (
+                            <li key={med.id} className="flex justify-between items-center">
+                              <span>{med.name} ({med.dosage}) - {med.frequency}</span>
+                              <MedicationExplanationDialog medicationName={med.name} language={formState.languagePreference} />
+                            </li>
+                          ))}
+                        </ul>
+                    </CardContent>
+                  </Card>
 
-                <div className="rounded-lg border p-4 space-y-4">
-                    <h4 className="font-semibold">Pictogram Instructions</h4>
-                    <div className="flex items-center justify-around text-center text-xs text-muted-foreground">
-                        <div className="flex flex-col items-center gap-1">
-                            <MorningIcon className="h-8 w-8 text-primary"/>
-                            <span>Morning</span>
-                        </div>
-                        <div className="flex flex-col items-center gap-1">
-                            <AfternoonIcon className="h-8 w-8 text-primary"/>
-                            <span>Afternoon</span>
-                        </div>
-                         <div className="flex flex-col items-center gap-1">
-                            <NightIcon className="h-8 w-8 text-primary"/>
-                            <span>Night</span>
-                        </div>
-                         <div className="flex flex-col items-center gap-1">
-                            <WithFoodIcon className="h-8 w-8 text-primary"/>
-                            <span>With Food</span>
-                        </div>
-                    </div>
-                </div>
-                <div className="flex flex-col sm:flex-row gap-4 items-center justify-between rounded-lg border p-4">
-                    <div className="space-y-2">
-                        <h4 className="font-semibold">Verification & Guidance</h4>
-                        <Button variant="outline" size="sm"><Volume2 className="mr-2 h-4 w-4"/>Audio Guidance</Button>
-                        <p className="text-xs text-muted-foreground">Scan for pharmacist verification.</p>
-                    </div>
-                     {qrCodeImage && (
-                        <Image 
-                            src={qrCodeImage.imageUrl} 
-                            alt={qrCodeImage.description} 
-                            width={120} 
-                            height={120}
-                            data-ai-hint={qrCodeImage.imageHint}
-                            className="rounded-md"
-                        />
-                    )}
-                </div>
-            </div>
-          ) : (
-            <div className="flex h-64 items-center justify-center rounded-lg border border-dashed">
-              <p className="text-muted-foreground">No summary generated yet.</p>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+                  <div className="rounded-lg border p-4 space-y-4">
+                      <h4 className="font-semibold">Pictogram Instructions</h4>
+                      <div className="flex items-center justify-around text-center text-xs text-muted-foreground">
+                          <div className="flex flex-col items-center gap-1">
+                              <MorningIcon className="h-8 w-8 text-primary"/>
+                              <span>Morning</span>
+                          </div>
+                          <div className="flex flex-col items-center gap-1">
+                              <AfternoonIcon className="h-8 w-8 text-primary"/>
+                              <span>Afternoon</span>
+                          </div>
+                           <div className="flex flex-col items-center gap-1">
+                              <NightIcon className="h-8 w-8 text-primary"/>
+                              <span>Night</span>
+                          </div>
+                           <div className="flex flex-col items-center gap-1">
+                              <WithFoodIcon className="h-8 w-8 text-primary"/>
+                              <span>With Food</span>
+                          </div>
+                      </div>
+                  </div>
+                  <div className="flex flex-col sm:flex-row gap-4 items-center justify-between rounded-lg border p-4">
+                      <div className="space-y-2">
+                          <h4 className="font-semibold">Verification & Guidance</h4>
+                          <Button variant="outline" size="sm"><Volume2 className="mr-2 h-4 w-4"/>Audio Guidance</Button>
+                          <p className="text-xs text-muted-foreground">Scan for pharmacist verification.</p>
+                      </div>
+                       {qrCodeImage && (
+                          <Image 
+                              src={qrCodeImage.imageUrl} 
+                              alt={qrCodeImage.description} 
+                              width={120} 
+                              height={120}
+                              data-ai-hint={qrCodeImage.imageHint}
+                              className="rounded-md"
+                          />
+                      )}
+                  </div>
+              </div>
+            ) : (
+              <div className="flex h-64 items-center justify-center rounded-lg border border-dashed">
+                <p className="text-muted-foreground">No summary generated yet.</p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+         <Card>
+            <CardHeader>
+                <CardTitle>Discharge Readiness</CardTitle>
+                <CardDescription>At-a-glance view of patient's readiness for discharge.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <DischargeReadinessChart data={readinessData} />
+            </CardContent>
+        </Card>
+      </div>
     </div>
   )
 }

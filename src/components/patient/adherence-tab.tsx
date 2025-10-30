@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/chart';
 import { Bar, CartesianGrid, XAxis, YAxis, BarChart as RechartsBarChart } from 'recharts';
 import { format, parseISO, startOfDay } from 'date-fns';
+import PatientEngagementChart from './patient-engagement-chart';
 
 interface AdherenceTabProps {
   patient: Patient;
@@ -80,6 +81,13 @@ export default function AdherenceTab({ patient }: AdherenceTabProps) {
 
   const upcomingDoses = patient.adherence.filter((a) => a.status === 'Pending').slice(0, 5);
 
+  const engagementData = [
+    { name: 'Reminders Opened', value: 45, fill: 'hsl(var(--chart-1))' },
+    { name: 'Educational Videos Watched', value: 25, fill: 'hsl(var(--chart-2))' },
+    { name: 'Symptoms Logged', value: 15, fill: 'hsl(var(--chart-3))' },
+    { name: 'Caregiver Interactions', value: 10, fill: 'hsl(var(--chart-4))' },
+  ];
+
   return (
     <div className="grid gap-6">
       <div className="grid gap-6 md:grid-cols-3">
@@ -120,35 +128,37 @@ export default function AdherenceTab({ patient }: AdherenceTabProps) {
 
       <div className="grid gap-6 md:grid-cols-2">
         <AdherenceChart adherenceData={patient.adherence} />
-        <Card>
-          <CardHeader>
-            <CardTitle>Upcoming Reminders</CardTitle>
-            <CardDescription>Simulated view of upcoming WhatsApp/SMS nudges.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            {upcomingDoses.length > 0 ? (
-              <ul className="space-y-4">
-                {upcomingDoses.map((dose) => (
-                  <li key={dose.id} className="flex items-center">
-                    <BellRing className="h-5 w-5 mr-3 text-primary" />
-                    <div className="flex-1">
-                      <p className="font-medium">{dose.medicationName}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {format(parseISO(dose.scheduledTime), "MMM dd 'at' hh:mm a")}
-                      </p>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-                <div className="text-sm text-center text-muted-foreground py-8">
-                    <CalendarDays className="mx-auto h-8 w-8 mb-2"/>
-                    <p>No upcoming medication reminders.</p>
-                </div>
-            )}
-          </CardContent>
-        </Card>
+        <PatientEngagementChart data={engagementData} />
       </div>
+
+       <Card>
+        <CardHeader>
+          <CardTitle>Upcoming Reminders</CardTitle>
+          <CardDescription>Simulated view of upcoming WhatsApp/SMS nudges.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          {upcomingDoses.length > 0 ? (
+            <ul className="space-y-4">
+              {upcomingDoses.map((dose) => (
+                <li key={dose.id} className="flex items-center">
+                  <BellRing className="h-5 w-5 mr-3 text-primary" />
+                  <div className="flex-1">
+                    <p className="font-medium">{dose.medicationName}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {format(parseISO(dose.scheduledTime), "MMM dd 'at' hh:mm a")}
+                    </p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          ) : (
+              <div className="text-sm text-center text-muted-foreground py-8">
+                  <CalendarDays className="mx-auto h-8 w-8 mb-2"/>
+                  <p>No upcoming medication reminders.</p>
+              </div>
+          )}
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>

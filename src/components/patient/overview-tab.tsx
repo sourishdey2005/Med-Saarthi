@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { MedicalHistorySummary } from './medical-history-summary'
 import VitalsChart from './vitals-chart'
 import { AlertTriangle, Info, ShieldAlert } from 'lucide-react'
+import CareTransitionSankey from './care-transition-sankey'
 
 interface OverviewTabProps {
   patient: Patient
@@ -16,6 +17,26 @@ const alertIcons = {
   Warning: <AlertTriangle className="h-5 w-5 text-yellow-500" />,
   Info: <Info className="h-5 w-5 text-blue-500" />,
 }
+
+const sankeyData = {
+    nodes: [
+        { name: 'Admission' },
+        { name: 'Diagnosis' },
+        { name: 'Treatment' },
+        { name: 'Reconciliation' },
+        { name: 'Education' },
+        { name: 'Discharge' }
+    ],
+    links: [
+        { source: 0, target: 1, value: 100 },
+        { source: 1, target: 2, value: 100 },
+        { source: 2, target: 3, value: 80 },
+        { source: 2, target: 5, value: 20 }, // 20% skip reconciliation
+        { source: 3, target: 4, value: 80 },
+        { source: 4, target: 5, value: 80 }
+    ]
+};
+
 
 export default function OverviewTab({ patient }: OverviewTabProps) {
   return (
@@ -50,6 +71,10 @@ export default function OverviewTab({ patient }: OverviewTabProps) {
       
       <div className="md:col-span-2 lg:col-span-3">
         <VitalsChart vitals={patient.vitals} />
+      </div>
+
+       <div className="md:col-span-2 lg:col-span-3">
+        <CareTransitionSankey data={sankeyData} />
       </div>
     </div>
   )

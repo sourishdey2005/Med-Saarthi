@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { AlertTriangle, ArrowRight, Bot, CheckCircle, Info, Loader2, MinusCircle, PlusCircle, ShieldAlert, XCircle } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
+import ClinicalRiskHeatmap from './clinical-risk-heatmap';
 
 
 interface MedicationTabProps {
@@ -151,18 +152,14 @@ function InteractionAlerts({ patient }: { patient: Patient }) {
 export default function MedicationTab({ patient }: MedicationTabProps) {
   return (
     <div className="grid gap-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Medication Reconciliation</CardTitle>
-          <CardDescription>Comparison of pre-admission and post-discharge medications.</CardDescription>
-        </CardHeader>
-        <CardContent className="grid md:grid-cols-2 gap-6">
+      <div className="grid md:grid-cols-2 gap-6">
           <MedicationList title="Pre-Admission Medications" medications={patient.medications.preAdmission} />
           <MedicationList title="Post-Discharge Medications" medications={patient.medications.postDischarge} />
-        </CardContent>
-      </Card>
+      </div>
 
       <InteractionAlerts patient={patient} />
+
+      <ClinicalRiskHeatmap medications={patient.medications.postDischarge} />
     </div>
   );
 }
