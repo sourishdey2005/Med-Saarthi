@@ -37,7 +37,7 @@ export default function HealthLiteracyMap() {
                 <CartesianGrid horizontal={false} />
                 <YAxis dataKey="region" type="category" tickLine={false} axisLine={false} tickMargin={10} />
                 <XAxis type="number" hide />
-                <Tooltip content={<ChartTooltipContent />} cursor={false} />
+                <ChartTooltip content={<ChartTooltipContent />} cursor={false} />
                 <Legend />
                 <Bar dataKey="score" name="Health Literacy Index" radius={5} fill="var(--color-mumbai)" />
             </BarChart>

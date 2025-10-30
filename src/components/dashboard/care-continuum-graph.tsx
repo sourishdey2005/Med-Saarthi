@@ -2,8 +2,8 @@
 
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ChartContainer } from '@/components/ui/chart';
-import { Sankey, Tooltip, Layer, Rectangle } from 'recharts';
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
+import { Sankey, Layer, Rectangle } from 'recharts';
 
 const data = {
   nodes: [
@@ -102,7 +102,7 @@ export default function CareContinuumGraph() {
               );
             }}
           >
-            <Tooltip content={<CustomTooltip />} />
+            <ChartTooltip content={<CustomTooltip />} />
           </Sankey>
         </ChartContainer>
       </CardContent>
