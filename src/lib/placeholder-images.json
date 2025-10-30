@@ -1,3 +1,58 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "patient-1",
+      "description": "Photo of patient Priya Sharma",
+      "imageUrl": "https://images.unsplash.com/photo-1509839862600-309617c3201e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxpbmRpYW4lMjB3b21hbnxlbnwwfHx8fDE3NjE3NTQ0NTd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "indian woman"
+    },
+    {
+      "id": "patient-2",
+      "description": "Photo of patient Rajesh Kumar",
+      "imageUrl": "https://images.unsplash.com/photo-1607346256330-dee7af15f7c5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxpbmRpYW4lMjBtYW58ZW58MHx8fHwxNzYxODE5OTIwfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "indian man"
+    },
+    {
+      "id": "patient-3",
+      "description": "Photo of patient Anjali Devi",
+      "imageUrl": "https://images.unsplash.com/photo-1616098055249-3a594c1df11c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxpbmRpYW4lMjB3b21hbiUyMHNtaWxpbmd8ZW58MHx8fHwxNzYxODM3NTczfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "indian woman smiling"
+    },
+    {
+      "id": "patient-4",
+      "description": "Photo of patient Vikram Singh",
+      "imageUrl": "https://images.unsplash.com/photo-1753544202892-59c8462c846e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxpbmRpYW4lMjBtYW4lMjBlbGRlcmx5fGVufDB8fHx8MTc2MTgzNzU3M3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "indian man elderly"
+    },
+    {
+      "id": "patient-5",
+      "description": "Photo of patient Meena Kumari",
+      "imageUrl": "https://images.unsplash.com/photo-1654764745889-92b1a9f3a546?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxpbmRpYW4lMjB3b21hbiUyMHlvdW5nfGVufDB8fHx8MTc2MTgzNzU3M3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "indian woman young"
+    },
+    {
+      "id": "patient-6",
+      "description": "Photo of patient Arjun Patel",
+      "imageUrl": "https://images.unsplash.com/photo-1595956935400-eced8114c8ea?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxpbmRpYW4lMjBtYW4lMjBtaWRkbGUtYWdlZHxlbnwwfHx8fDE3NjE4Mzc1NzN8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "indian man middle-aged"
+    },
+    {
+      "id": "doctor-1",
+      "description": "Photo of Dr. Anita Desai",
+      "imageUrl": "https://images.unsplash.com/photo-1659353886868-753b0c5c5772?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxpbmRpYW4lMjBkb2N0b3IlMjB3b21hbnxlbnwwfHx8fDE3NjE4Mzc1NzN8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "indian doctor woman"
+    },
+    {
+      "id": "user-avatar",
+      "description": "Avatar for the logged in user",
+      "imageUrl": "https://images.unsplash.com/photo-1651008376811-b90baee60c1f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxkb2N0b3J8ZW58MHx8fHwxNzYxODM3NTczfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "doctor"
+    },
+    {
+      "id": "qr-code",
+      "description": "Placeholder QR code for verification",
+      "imageUrl": "https://images.unsplash.com/photo-1550482781-48d477e61c72?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxxciUyMGNvZGV8ZW58MHx8fHwxNzYxODAxNTQ5fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "qr code"
+    }
+  ]
 }
