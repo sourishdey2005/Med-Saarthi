@@ -10,7 +10,8 @@ import MedicationTab from '@/components/patient/medication-tab'
 import DischargeTab from '@/components/patient/discharge-tab'
 import CaregiverTab from '@/components/patient/caregiver-tab'
 import AdherenceTab from '@/components/patient/adherence-tab'
-import { FileText, Pill, Users, LayoutGrid, ClipboardCheck } from 'lucide-react'
+import SymptomDiaryTab from '@/components/patient/symptom-diary-tab'
+import { FileText, Pill, Users, LayoutGrid, ClipboardCheck, BookHeart } from 'lucide-react'
 
 export default function PatientDetailPage({ params }: { params: { id: string } }) {
   const patient = getPatientById(params.id)
@@ -44,10 +45,11 @@ export default function PatientDetailPage({ params }: { params: { id: string } }
       </div>
       
       <Tabs defaultValue="overview" className="grid gap-6">
-        <TabsList className="grid w-full grid-cols-2 sm:grid-cols-5">
+        <TabsList className="grid w-full grid-cols-3 sm:grid-cols-6">
           <TabsTrigger value="overview"><LayoutGrid className="mr-2 h-4 w-4"/>Overview</TabsTrigger>
           <TabsTrigger value="medication"><Pill className="mr-2 h-4 w-4"/>Medication</TabsTrigger>
           <TabsTrigger value="adherence"><ClipboardCheck className="mr-2 h-4 w-4"/>Adherence</TabsTrigger>
+          <TabsTrigger value="symptoms"><BookHeart className="mr-2 h-4 w-4"/>Symptoms</TabsTrigger>
           <TabsTrigger value="discharge"><FileText className="mr-2 h-4 w-4"/>Discharge</TabsTrigger>
           <TabsTrigger value="caregivers"><Users className="mr-2 h-4 w-4"/>Caregivers</TabsTrigger>
         </TabsList>
@@ -60,6 +62,9 @@ export default function PatientDetailPage({ params }: { params: { id: string } }
         </TabsContent>
          <TabsContent value="adherence">
             <AdherenceTab patient={patient} />
+        </TabsContent>
+        <TabsContent value="symptoms">
+            <SymptomDiaryTab patient={patient} />
         </TabsContent>
         <TabsContent value="discharge">
             <DischargeTab patient={patient} />

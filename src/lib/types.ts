@@ -19,6 +19,7 @@ export type Patient = {
   diagnosis: string
   followUp: string
   adherence: AdherenceEvent[]
+  symptoms: SymptomLog[]
   egfr?: number
   lft?: string
 }
@@ -66,6 +67,7 @@ export type Caregiver = {
   relation: string
   phone: string
   avatarUrl: string
+  comprehensionStatus: 'Pending' | 'Acknowledged' | 'Declined'
 }
 
 export type AdherenceEvent = {
@@ -75,4 +77,12 @@ export type AdherenceEvent = {
   scheduledTime: string
   status: 'Taken' | 'Missed' | 'Pending'
   actualTime?: string
+}
+
+export type SymptomLog = {
+    id: string;
+    date: string;
+    symptom: string;
+    severity: 'Mild' | 'Moderate' | 'Severe';
+    notes: string;
 }

@@ -33,7 +33,7 @@ export const patients: Patient[] = [
       { id: 'alert2', type: 'Dose', severity: 'Info', description: 'Amlodipine dose increased from 5mg to 10mg.' },
     ],
     caregivers: [
-      { id: 'care1', name: 'Rohan Sharma', relation: 'Son', phone: '+91-9876543210', avatarUrl: 'https://picsum.photos/seed/caregiver1/100/100' },
+      { id: 'care1', name: 'Rohan Sharma', relation: 'Son', phone: '+91-9876543210', avatarUrl: 'https://picsum.photos/seed/caregiver1/100/100', comprehensionStatus: 'Acknowledged' },
     ],
     abhaRecord: `Patient Name: Priya Sharma
 ABHA ID: 12-3456-7890-1234
@@ -60,6 +60,10 @@ Family History: Father had coronary artery disease.`,
         { id: 'adh11', medicationId: 'med1', medicationName: 'Metformin', scheduledTime: '2024-05-20T08:00:00', status: 'Pending' },
         { id: 'adh12', medicationId: 'med3', medicationName: 'Atorvastatin', scheduledTime: '2024-05-20T08:00:00', status: 'Pending' },
       ],
+    symptoms: [
+      { id: 'sym1', date: '2024-05-18', symptom: 'Mild chest tightness', severity: 'Mild', notes: 'Occurred after walking up stairs. Lasted 2 minutes.' },
+      { id: 'sym2', date: '2024-05-19', symptom: 'Shortness of breath', severity: 'Moderate', notes: 'Felt breathless after a short walk in the morning.' },
+    ],
     egfr: 45, // Represents eGFR value for renal function
     lft: 'Slightly Elevated', // Represents Liver Function Test result
   },
@@ -80,6 +84,7 @@ Family History: Father had coronary artery disease.`,
     diagnosis: '',
     followUp: '',
     adherence: [],
+    symptoms: [],
   },
   {
     id: '3',
@@ -98,6 +103,7 @@ Family History: Father had coronary artery disease.`,
     diagnosis: '',
     followUp: '',
     adherence: [],
+    symptoms: [],
   },
   {
     id: '4',
@@ -116,6 +122,7 @@ Family History: Father had coronary artery disease.`,
     diagnosis: '',
     followUp: '',
     adherence: [],
+    symptoms: [],
   },
 ];
 
