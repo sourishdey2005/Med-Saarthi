@@ -29,6 +29,7 @@ const AlertSchema = z.object({
     severity: z.enum(['Critical', 'Warning', 'Info']),
     description: z.string(),
     reasoning: z.string().describe('A brief, SHAP-style explanation for why the alert was triggered, for clinician transparency.'),
+    mechanism: z.string().optional().describe('For drug interactions, explain the metabolic pathway (e.g., CYP enzyme inhibition, QT prolongation) in simple terms.')
 });
 
 const ReconcileMedicationsOutputSchema = z.object({
@@ -60,7 +61,7 @@ Medication Lists:
 Analyze the medication lists and patient profile. Generate alerts for the following issues:
 1.  **Anomaly Detection**: Flag any unusual or potentially dangerous changes (e.g., stopping a critical medication like an anticoagulant without a clear replacement, adding multiple drugs from the same class).
 2.  **Dosage Intelligence**: Based on the patient's age ({{patientInfo.age}}), check for medications that require dosage adjustments for senior citizens or have specific warnings for the elderly.
-3.  **Interaction Alerts**: Check for significant drug-drug interactions between the post-discharge medications.
+3.  **Interaction Alerts**: Check for significant drug-drug interactions between the post-discharge medications. For each 'Drug-Interaction' alert, **you must** provide a 'mechanism' field explaining the interaction pathway (e.g., "CYP3A4 Inhibition", "Additive QT Prolongation", "Increased Bleeding Risk", "Serotonin Syndrome"). The mechanism should be technical but concise.
 4.  **Drug-Food Interaction Assistant**: Identify potential interactions with common foods (e.g., grapefruit and statins) or Ayurvedic/Indian spices (e.g., turmeric).
 5.  **Formulary Alerts**: Flag if any medication is not standard first-line therapy for the patient's conditions based on Indian treatment guidelines.
 6.  **Antibiotic Stewardship (ICMR Guidelines)**: If an antibiotic is prescribed, verify if it's a first-line agent for the given diagnosis ({{patientInfo.conditions}}). Flag broad-spectrum antibiotics if a narrower-spectrum one would suffice.

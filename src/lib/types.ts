@@ -63,6 +63,7 @@ export type Alert = {
   severity: 'Critical' | 'Warning' | 'Info'
   description: string
   reasoning?: string
+  mechanism?: string
 }
 
 export type Caregiver = {

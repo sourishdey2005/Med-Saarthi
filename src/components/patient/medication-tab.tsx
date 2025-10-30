@@ -12,6 +12,7 @@ import { AlertTriangle, ArrowRight, Bot, CheckCircle, Info, Loader2, MinusCircle
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
 import ClinicalRiskHeatmap from './clinical-risk-heatmap';
 import SpecializedRiskCharts from './specialized-risk-charts';
+import DrugInteractionGraph from './drug-interaction-graph';
 
 
 interface MedicationTabProps {
@@ -113,6 +114,12 @@ function InteractionAlerts({ patient, alerts, setAlerts, isPending, handleAnalyz
                 <AccordionContent className="pt-4 text-xs text-muted-foreground pl-8">
                   <p className='font-semibold mb-1'>XAI Reasoning:</p>
                   <p>{alert.reasoning || "No detailed reasoning available."}</p>
+                  {alert.mechanism && (
+                    <>
+                        <p className='font-semibold mt-2 mb-1'>Mechanism:</p>
+                        <p>{alert.mechanism}</p>
+                    </>
+                  )}
                 </AccordionContent>
               </AccordionItem>
             ))}
@@ -155,6 +162,8 @@ export default function MedicationTab({ patient }: MedicationTabProps) {
   };
 
   const allAlerts: AlertType[] = [...patient.alerts, ...aiAlerts];
+  const interactionAlerts = allAlerts.filter(a => a.type === 'Drug-Interaction');
+
 
   return (
     <div className="grid gap-6">
@@ -170,6 +179,8 @@ export default function MedicationTab({ patient }: MedicationTabProps) {
         isPending={isPending}
         handleAnalyze={handleAnalyzeMedications}
       />
+      
+      {interactionAlerts.length > 0 && <DrugInteractionGraph alerts={interactionAlerts} />}
 
       <SpecializedRiskCharts alerts={allAlerts} />
 
