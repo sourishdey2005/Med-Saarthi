@@ -1,11 +1,17 @@
-import type { Patient, Medication } from '@/lib/types'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { Badge } from '@/components/ui/badge'
-import { AlertTriangle, ArrowRight, CheckCircle, MinusCircle, PlusCircle, XCircle } from 'lucide-react'
+'use client';
+
+import React, { useState, useTransition } from 'react';
+import type { Patient, Medication, Alert as AlertType } from '@/lib/types';
+import { reconcileMedications } from '@/ai/flows/reconcile-medications';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast';
+import { AlertTriangle, ArrowRight, Bot, CheckCircle, Loader2, MinusCircle, PlusCircle, ShieldAlert, XCircle } from 'lucide-react';
 
 interface MedicationTabProps {
-  patient: Patient
+  patient: Patient;
 }
 
 const statusIcons: { [key: string]: React.ReactNode } = {
@@ -13,93 +19,140 @@ const statusIcons: { [key: string]: React.ReactNode } = {
   Changed: <ArrowRight className="h-4 w-4 text-blue-500" />,
   Unchanged: <CheckCircle className="h-4 w-4 text-gray-500" />,
   Discontinued: <MinusCircle className="h-4 w-4 text-red-500" />,
-}
+};
 
 const statusColors: { [key: string]: 'default' | 'secondary' | 'destructive' | 'outline' } = {
-    New: 'default',
-    Changed: 'default',
-    Unchanged: 'secondary',
-    Discontinued: 'destructive'
+  New: 'default',
+  Changed: 'default',
+  Unchanged: 'secondary',
+  Discontinued: 'destructive',
+};
+
+const alertSeverityIcons: { [key: string]: React.ReactNode } = {
+  Critical: <ShieldAlert className="h-5 w-5 text-destructive" />,
+  Warning: <AlertTriangle className="h-5 w-5 text-yellow-500" />,
+  Info: <CheckCircle className="h-5 w-5 text-blue-500" />,
+};
+
+
+function MedicationList({ title, medications }: { title: string; medications: Medication[] }) {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>{title}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Medication</TableHead>
+              <TableHead>Dosage</TableHead>
+              <TableHead>Frequency</TableHead>
+              {medications[0]?.status && <TableHead>Status</TableHead>}
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {medications.map((med) => (
+              <TableRow key={med.id}>
+                <TableCell className="font-medium">{med.name}</TableCell>
+                <TableCell>{med.dosage}</TableCell>
+                <TableCell>{med.frequency}</TableCell>
+                {med.status && (
+                  <TableCell>
+                    <Badge variant={statusColors[med.status]}>
+                      {statusIcons[med.status]}
+                      <span className="ml-1">{med.status}</span>
+                    </Badge>
+                  </TableCell>
+                )}
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
+  );
 }
 
-function MedicationList({ title, medications }: { title: string, medications: Medication[] }) {
-    return (
-        <Card>
-            <CardHeader>
-                <CardTitle>{title}</CardTitle>
-            </CardHeader>
-            <CardContent>
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>Medication</TableHead>
-                            <TableHead>Dosage</TableHead>
-                            <TableHead>Frequency</TableHead>
-                            {medications[0]?.status && <TableHead>Status</TableHead>}
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {medications.map(med => (
-                            <TableRow key={med.id}>
-                                <TableCell className="font-medium">{med.name}</TableCell>
-                                <TableCell>{med.dosage}</TableCell>
-                                <TableCell>{med.frequency}</TableCell>
-                                {med.status && (
-                                    <TableCell>
-                                        <Badge variant={statusColors[med.status]}>
-                                            {statusIcons[med.status]}
-                                            <span className="ml-1">{med.status}</span>
-                                        </Badge>
-                                    </TableCell>
-                                )}
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </CardContent>
-        </Card>
-    )
+function InteractionAlerts({ patient }: { patient: Patient }) {
+  const [isPending, startTransition] = useTransition();
+  const { toast } = useToast();
+  const [aiAlerts, setAiAlerts] = useState<AlertType[]>([]);
+
+  const handleAnalyzeMedications = () => {
+    startTransition(async () => {
+      try {
+        const result = await reconcileMedications({
+          patientInfo: {
+            age: patient.age,
+            gender: patient.gender,
+            conditions: patient.diagnosis,
+          },
+          preAdmissionMedications: patient.medications.preAdmission.map(m => m.name),
+          postDischargeMedications: patient.medications.postDischarge.map(m => `${m.name} ${m.dosage}`),
+        });
+        setAiAlerts(result.alerts);
+        toast({ title: 'Analysis Complete', description: `Found ${result.alerts.length} potential issues.` });
+      } catch (error) {
+        console.error(error);
+        toast({ title: 'Error', description: 'Failed to analyze medications.', variant: 'destructive' });
+      }
+    });
+  };
+
+  const allAlerts = [...patient.alerts.filter(a => a.type !== 'Dose'), ...aiAlerts];
+
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between">
+        <div>
+          <CardTitle>Interaction Alerts</CardTitle>
+          <CardDescription>Potential drug-drug, drug-disease, and allergy interactions.</CardDescription>
+        </div>
+        <Button onClick={handleAnalyzeMedications} disabled={isPending}>
+          {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Bot className="mr-2 h-4 w-4" />}
+          Run AI Safety Check
+        </Button>
+      </CardHeader>
+      <CardContent>
+        {allAlerts.length > 0 ? (
+          <ul className="space-y-3">
+            {allAlerts.map((alert, index) => (
+              <li key={alert.id || index} className="flex items-start gap-3 rounded-md border p-3">
+                <div>
+                  {alertSeverityIcons[alert.severity] || <XCircle className="h-5 w-5 text-destructive" />}
+                </div>
+                <div>
+                  <p className="font-semibold">{alert.type}</p>
+                  <p className="text-sm text-muted-foreground">{alert.description}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-sm text-muted-foreground">No interaction alerts flagged.</p>
+        )}
+      </CardContent>
+    </Card>
+  );
 }
+
 
 export default function MedicationTab({ patient }: MedicationTabProps) {
   return (
     <div className="grid gap-6">
-        <Card>
-            <CardHeader>
-                <CardTitle>Medication Reconciliation</CardTitle>
-                <CardDescription>Comparison of pre-admission and post-discharge medications.</CardDescription>
-            </CardHeader>
-            <CardContent className="grid md:grid-cols-2 gap-6">
-                <MedicationList title="Pre-Admission Medications" medications={patient.medications.preAdmission} />
-                <MedicationList title="Post-Discharge Medications" medications={patient.medications.postDischarge} />
-            </CardContent>
-        </Card>
-      
-        <Card>
-            <CardHeader>
-                <CardTitle>Interaction Alerts</CardTitle>
-                <CardDescription>Potential drug-drug, drug-disease, and allergy interactions.</CardDescription>
-            </CardHeader>
-            <CardContent>
-            {patient.alerts.length > 0 ? (
-                <ul className="space-y-3">
-                {patient.alerts.filter(a => a.type !== 'Dose').map((alert) => (
-                    <li key={alert.id} className="flex items-start gap-3 rounded-md border p-3">
-                    <div>
-                        {alert.severity === 'Warning' ? <AlertTriangle className="h-5 w-5 text-yellow-500" /> : <XCircle className="h-5 w-5 text-destructive" />}
-                    </div>
-                    <div>
-                        <p className="font-semibold">{alert.type}</p>
-                        <p className="text-sm text-muted-foreground">{alert.description}</p>
-                    </div>
-                    </li>
-                ))}
-                </ul>
-            ) : (
-                <p className="text-sm text-muted-foreground">No interaction alerts flagged.</p>
-            )}
-            </CardContent>
-        </Card>
+      <Card>
+        <CardHeader>
+          <CardTitle>Medication Reconciliation</CardTitle>
+          <CardDescription>Comparison of pre-admission and post-discharge medications.</CardDescription>
+        </CardHeader>
+        <CardContent className="grid md:grid-cols-2 gap-6">
+          <MedicationList title="Pre-Admission Medications" medications={patient.medications.preAdmission} />
+          <MedicationList title="Post-Discharge Medications" medications={patient.medications.postDischarge} />
+        </CardContent>
+      </Card>
+
+      <InteractionAlerts patient={patient} />
     </div>
-  )
+  );
 }

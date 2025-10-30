@@ -3,6 +3,7 @@
 import React, { useState, useTransition } from 'react'
 import Image from 'next/image'
 import { generateMultilingualDischargeSummary } from '@/ai/flows/generate-multilingual-discharge-summary'
+import { explainMedication } from '@/ai/flows/explain-medication'
 import type { Patient } from '@/lib/types'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -10,8 +11,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Bot, Loader2, Volume2, QrCode } from 'lucide-react'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from '@/components/ui/dialog'
+import { Bot, Loader2, Volume2, QrCode, Sparkles } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 import { PlaceHolderImages } from '@/lib/placeholder-images'
 import { AfternoonIcon, MorningIcon, NightIcon, WithFoodIcon } from '../icons'
@@ -27,6 +28,45 @@ const languages = [
   { value: 'ta', label: 'தமிழ் (Tamil)' },
   { value: 'mr', label: 'मराठी (Marathi)' },
 ]
+
+function MedicationExplanationDialog({ medicationName, language }: { medicationName: string; language: string }) {
+  const [explanation, setExplanation] = useState('');
+  const [isPending, startTransition] = useTransition();
+  const { toast } = useToast();
+
+  const handleExplain = () => {
+    startTransition(async () => {
+      try {
+        const result = await explainMedication({ medicationName, language });
+        setExplanation(result.explanation);
+      } catch (error) {
+        console.error(error);
+        toast({ title: 'Error', description: `Failed to explain ${medicationName}.`, variant: 'destructive' });
+      }
+    });
+  };
+
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="link" size="sm" className="h-auto p-0" onClick={handleExplain}>
+          <Sparkles className="mr-1 h-3 w-3" /> Explain
+        </Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>What is {medicationName}?</DialogTitle>
+          <DialogDescription>
+            A simple explanation of this medication.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="prose prose-sm max-w-none">
+          {isPending ? <Loader2 className="h-6 w-6 animate-spin" /> : <p>{explanation}</p>}
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
 
 export default function DischargeTab({ patient }: DischargeTabProps) {
   const [isPending, startTransition] = useTransition()
@@ -123,6 +163,23 @@ export default function DischargeTab({ patient }: DischargeTabProps) {
           {summary ? (
             <div className="space-y-6">
                 <div className="prose prose-sm max-w-none text-foreground whitespace-pre-wrap">{summary}</div>
+                
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-base">Medication Plan</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                      <ul className="space-y-2 text-sm">
+                        {patient.medications.postDischarge.map(med => (
+                          <li key={med.id} className="flex justify-between items-center">
+                            <span>{med.name} ({med.dosage}) - {med.frequency}</span>
+                            <MedicationExplanationDialog medicationName={med.name} language={formState.languagePreference} />
+                          </li>
+                        ))}
+                      </ul>
+                  </CardContent>
+                </Card>
+
                 <div className="rounded-lg border p-4 space-y-4">
                     <h4 className="font-semibold">Pictogram Instructions</h4>
                     <div className="flex items-center justify-around text-center text-xs text-muted-foreground">
