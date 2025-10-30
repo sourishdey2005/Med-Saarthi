@@ -1,3 +1,5 @@
+'use client';
+
 import type { Patient } from '@/lib/types'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
@@ -6,13 +8,16 @@ import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { PlusCircle, Trash2, UserCheck, Send, MessageCircleWarning } from 'lucide-react'
+import { useToast } from '@/hooks/use-toast';
 
 interface CaregiverTabProps {
   patient: Patient
 }
 
 export default function CaregiverTab({ patient }: CaregiverTabProps) {
-    const getBadgeVariant = (status: string) => {
+  const { toast } = useToast();
+
+  const getBadgeVariant = (status: string) => {
     switch (status) {
       case 'Acknowledged':
         return 'secondary'
@@ -23,6 +28,36 @@ export default function CaregiverTab({ patient }: CaregiverTabProps) {
         return 'outline'
     }
   }
+
+  const handleAddCaregiver = () => {
+    toast({
+      title: "Action Required",
+      description: "This would open a dialog to add a new caregiver.",
+    });
+  };
+
+  const handleRemoveCaregiver = (name: string) => {
+    toast({
+      title: "Caregiver Removed",
+      description: `${name} has been removed from the patient's caregivers.`,
+    });
+  };
+
+  const handleSendComprehensionCheck = () => {
+    toast({
+      title: "Comprehension Check Sent",
+      description: "A link has been sent to all caregivers to verify their understanding.",
+    });
+  };
+
+  const handleToggleReminders = (type: 'WhatsApp' | 'SMS', enabled: boolean) => {
+    toast({
+      title: `${type} Reminders ${enabled ? 'Enabled' : 'Disabled'}`,
+      description: `Caregivers will ${enabled ? 'now' : 'no longer'} receive ${type} reminders.`,
+    });
+  };
+
+
   return (
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
       <Card className="lg:col-span-2">
@@ -31,7 +66,7 @@ export default function CaregiverTab({ patient }: CaregiverTabProps) {
             <CardTitle>Caregiver Information</CardTitle>
             <CardDescription>Manage patient's support network and home-nurse integration.</CardDescription>
           </div>
-          <Button size="sm" variant="outline">
+          <Button size="sm" variant="outline" onClick={handleAddCaregiver}>
             <PlusCircle className="mr-2 h-4 w-4" /> Add Caregiver
           </Button>
         </CardHeader>
@@ -50,7 +85,7 @@ export default function CaregiverTab({ patient }: CaregiverTabProps) {
                       <p className="text-sm text-muted-foreground">{caregiver.relation} | {caregiver.phone}</p>
                     </div>
                   </div>
-                  <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive">
+                  <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive" onClick={() => handleRemoveCaregiver(caregiver.name)}>
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 </li>
@@ -82,7 +117,7 @@ export default function CaregiverTab({ patient }: CaregiverTabProps) {
                     </Badge>
                 </div>
             ))}
-             <Button variant="secondary" className="w-full">
+             <Button variant="secondary" className="w-full" onClick={handleSendComprehensionCheck}>
                 <Send className="mr-2 h-4 w-4" />
                 Send Comprehension Check
             </Button>
@@ -97,11 +132,11 @@ export default function CaregiverTab({ patient }: CaregiverTabProps) {
             <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
                     <Label htmlFor="whatsapp-reminders" className="font-normal">WhatsApp Reminders</Label>
-                    <Switch id="whatsapp-reminders" defaultChecked/>
+                    <Switch id="whatsapp-reminders" defaultChecked onCheckedChange={(checked) => handleToggleReminders('WhatsApp', checked)} />
                 </div>
                 <div className="flex items-center justify-between">
                     <Label htmlFor="sms-reminders" className="font-normal">SMS Reminders</Label>
-                    <Switch id="sms-reminders" />
+                    <Switch id="sms-reminders" onCheckedChange={(checked) => handleToggleReminders('SMS', checked)}/>
                 </div>
             </CardContent>
         </Card>
