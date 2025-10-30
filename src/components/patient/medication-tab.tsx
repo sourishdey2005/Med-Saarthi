@@ -105,7 +105,7 @@ function InteractionAlerts({ patient }: { patient: Patient }) {
     });
   };
 
-  const allAlerts: AlertType[] = [...patient.alerts.filter(a => a.type !== 'Dose'), ...aiAlerts];
+  const allAlerts: AlertType[] = [...patient.alerts, ...aiAlerts];
 
   return (
     <Card>
