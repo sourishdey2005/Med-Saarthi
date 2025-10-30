@@ -25,8 +25,10 @@ export default function OverviewTab({ patient }: OverviewTabProps) {
   
   const preAdmissionMeds = patient.medications.preAdmission.map(m => m.name);
   const postDischargeMeds = patient.medications.postDischarge.map(m => m.name);
-  
+
+  // Robust data preparation for Sankey chart
   const allMeds = [...new Set([...preAdmissionMeds, ...postDischargeMeds])];
+  
   const nodes = [
     { name: 'Pre-Admission' },
     { name: 'Post-Discharge' },
@@ -35,30 +37,42 @@ export default function OverviewTab({ patient }: OverviewTabProps) {
   ];
 
   const nodeMap = new Map(nodes.map((node, i) => [node.name, i]));
+  
   const links: { source: number; target: number; value: number }[] = [];
+  const linkSet = new Set<string>();
+
+  const addLink = (source: string, target: string, value: number) => {
+    const sourceIndex = nodeMap.get(source);
+    const targetIndex = nodeMap.get(target);
+    const key = `${sourceIndex}-${targetIndex}`;
+
+    if (sourceIndex !== undefined && targetIndex !== undefined && !linkSet.has(key)) {
+      links.push({ source: sourceIndex, target: targetIndex, value });
+      linkSet.add(key);
+    }
+  };
 
   const preAdmissionIndex = nodeMap.get('Pre-Admission')!;
   const postDischargeIndex = nodeMap.get('Post-Discharge')!;
   const discontinuedIndex = nodeMap.get('Discontinued')!;
+  
+  // Create links
+  allMeds.forEach(med => {
+    const wasOnPre = preAdmissionMeds.includes(med);
+    const isOnPost = postDischargeMeds.includes(med);
 
-
-  preAdmissionMeds.forEach(med => {
-    const medIndex = nodeMap.get(med)!;
-    links.push({ source: preAdmissionIndex, target: medIndex, value: 1 });
-
-    if(postDischargeMeds.includes(med)) {
-        links.push({ source: medIndex, target: postDischargeIndex, value: 1 });
-    } else {
-        links.push({ source: medIndex, target: discontinuedIndex, value: 1 });
-    }
-  });
-
-  postDischargeMeds.forEach(med => {
-    if (!preAdmissionMeds.includes(med)) {
-        const medIndex = nodeMap.get(med)!;
-        // This link is invisible but necessary for layout
-        links.push({ source: preAdmissionIndex, target: medIndex, value: 0 });
-        links.push({ source: medIndex, target: postDischargeIndex, value: 1 });
+    if (wasOnPre) {
+      addLink('Pre-Admission', med, 1);
+      if (isOnPost) {
+        addLink(med, 'Post-Discharge', 1);
+      } else {
+        addLink(med, 'Discontinued', 1);
+      }
+    } else if (isOnPost) { // New medication
+      // Add a zero-value link from pre-admission to keep the layout clean
+      // and ensure the node appears in the middle.
+      addLink('Pre-Admission', med, 0); 
+      addLink(med, 'Post-Discharge', 1);
     }
   });
   
