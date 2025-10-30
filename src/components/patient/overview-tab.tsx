@@ -23,59 +23,36 @@ const alertIcons = {
 
 export default function OverviewTab({ patient }: OverviewTabProps) {
   
-  const preAdmissionMeds = patient.medications.preAdmission.map(m => m.name);
-  const postDischargeMeds = patient.medications.postDischarge.map(m => m.name);
+  const preAdmissionMeds = new Set(patient.medications.preAdmission.map(m => m.name));
+  const postDischargeMeds = new Set(patient.medications.postDischarge.map(m => m.name));
 
-  // Robust data preparation for Sankey chart
-  const allMeds = [...new Set([...preAdmissionMeds, ...postDischargeMeds])];
-  
+  const continuedMeds = [...preAdmissionMeds].filter(med => postDischargeMeds.has(med));
+  const discontinuedMeds = [...preAdmissionMeds].filter(med => !postDischargeMeds.has(med));
+  const newMeds = [...postDischargeMeds].filter(med => !preAdmissionMeds.has(med));
+
   const nodes = [
     { name: 'Pre-Admission' },
     { name: 'Post-Discharge' },
+    { name: 'Continued' },
     { name: 'Discontinued' },
-    ...allMeds.map(name => ({ name }))
+    { name: 'New' },
   ];
 
   const nodeMap = new Map(nodes.map((node, i) => [node.name, i]));
   
   const links: { source: number; target: number; value: number }[] = [];
-  const linkSet = new Set<string>();
 
-  const addLink = (source: string, target: string, value: number) => {
-    const sourceIndex = nodeMap.get(source);
-    const targetIndex = nodeMap.get(target);
-    const key = `${sourceIndex}-${targetIndex}`;
+  if (continuedMeds.length > 0) {
+    links.push({ source: nodeMap.get('Pre-Admission')!, target: nodeMap.get('Continued')!, value: continuedMeds.length });
+    links.push({ source: nodeMap.get('Continued')!, target: nodeMap.get('Post-Discharge')!, value: continuedMeds.length });
+  }
+  if (discontinuedMeds.length > 0) {
+    links.push({ source: nodeMap.get('Pre-Admission')!, target: nodeMap.get('Discontinued')!, value: discontinuedMeds.length });
+  }
+  if (newMeds.length > 0) {
+    links.push({ source: nodeMap.get('New')!, target: nodeMap.get('Post-Discharge')!, value: newMeds.length });
+  }
 
-    if (sourceIndex !== undefined && targetIndex !== undefined && !linkSet.has(key)) {
-      links.push({ source: sourceIndex, target: targetIndex, value });
-      linkSet.add(key);
-    }
-  };
-
-  const preAdmissionIndex = nodeMap.get('Pre-Admission')!;
-  const postDischargeIndex = nodeMap.get('Post-Discharge')!;
-  const discontinuedIndex = nodeMap.get('Discontinued')!;
-  
-  // Create links
-  allMeds.forEach(med => {
-    const wasOnPre = preAdmissionMeds.includes(med);
-    const isOnPost = postDischargeMeds.includes(med);
-
-    if (wasOnPre) {
-      addLink('Pre-Admission', med, 1);
-      if (isOnPost) {
-        addLink(med, 'Post-Discharge', 1);
-      } else {
-        addLink(med, 'Discontinued', 1);
-      }
-    } else if (isOnPost) { // New medication
-      // Add a zero-value link from pre-admission to keep the layout clean
-      // and ensure the node appears in the middle.
-      addLink('Pre-Admission', med, 0); 
-      addLink(med, 'Post-Discharge', 1);
-    }
-  });
-  
   const sankeyData = { nodes, links };
 
   return (
