@@ -25,7 +25,7 @@ export type ReconcileMedicationsInput = z.infer<typeof ReconcileMedicationsInput
 
 const AlertSchema = z.object({
     id: z.string(),
-    type: z.enum(['Drug-Interaction', 'Dosage-Warning', 'Formulary-Alert', 'Anomaly-Detection', 'Antibiotic-Stewardship', 'Dosage-Adjustment-Needed']),
+    type: z.enum(['Drug-Interaction', 'Dosage-Warning', 'Formulary-Alert', 'Anomaly-Detection', 'Antibiotic-Stewardship', 'Dosage-Adjustment-Needed', 'Polypharmacy-Risk', 'Drug-Food-Interaction', 'Cognitive-Screening-Recommended']),
     severity: z.enum(['Critical', 'Warning', 'Info']),
     description: z.string(),
     reasoning: z.string().describe('A brief, SHAP-style explanation for why the alert was triggered, for clinician transparency.'),
@@ -44,7 +44,7 @@ const prompt = ai.definePrompt({
   name: 'reconcileMedicationsPrompt',
   input: {schema: ReconcileMedicationsInputSchema},
   output: {schema: ReconcileMedicationsOutputSchema},
-  prompt: `You are an AI-powered Medical Safety Engine. Your task is to analyze a patient's medication list for potential risks and provide clear, explainable alerts based on Indian medical guidelines.
+  prompt: `You are an AI-powered Medical Safety Engine. Your task is to analyze a patient's medication list for a comprehensive set of potential risks and provide clear, explainable alerts based on Indian medical guidelines.
 
 Patient Profile:
 - Age: {{patientInfo.age}}
@@ -57,13 +57,16 @@ Medication Lists:
 - Pre-Admission: {{#each preAdmissionMedications}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}
 - Post-Discharge: {{#each postDischargeMedications}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}
 
-Analyze the transition from pre-admission to post-discharge medications. Identify and generate alerts for the following issues:
+Analyze the medication lists and patient profile. Generate alerts for the following issues:
 1.  **Anomaly Detection**: Flag any unusual or potentially dangerous changes (e.g., stopping a critical medication like an anticoagulant without a clear replacement, adding multiple drugs from the same class).
 2.  **Dosage Intelligence**: Based on the patient's age ({{patientInfo.age}}), check for medications that require dosage adjustments for senior citizens or have specific warnings for the elderly.
-3.  **Interaction Alerts**: Check for significant interactions between the post-discharge medications. Include interactions with common Ayurvedic supplements like Ashwagandha or Turmeric if relevant.
-4.  **Formulary Alerts**: Flag if any medication is not standard first-line therapy for the patient's conditions based on Indian treatment guidelines.
-5.  **Antibiotic Stewardship (ICMR Guidelines)**: If an antibiotic is prescribed, verify if it's a first-line agent for the given diagnosis ({{patientInfo.conditions}}). Flag broad-spectrum antibiotics if a narrower-spectrum one would suffice.
-6.  **Renal/Hepatic Dosing**: If the patient has impaired renal (eGFR < 60) or hepatic function, check if any of the post-discharge medications require dose adjustment. Generate a 'Dosage-Adjustment-Needed' alert with a suggestion.
+3.  **Interaction Alerts**: Check for significant drug-drug interactions between the post-discharge medications.
+4.  **Drug-Food Interaction Assistant**: Identify potential interactions with common foods (e.g., grapefruit and statins) or Ayurvedic/Indian spices (e.g., turmeric).
+5.  **Formulary Alerts**: Flag if any medication is not standard first-line therapy for the patient's conditions based on Indian treatment guidelines.
+6.  **Antibiotic Stewardship (ICMR Guidelines)**: If an antibiotic is prescribed, verify if it's a first-line agent for the given diagnosis ({{patientInfo.conditions}}). Flag broad-spectrum antibiotics if a narrower-spectrum one would suffice.
+7.  **Renal/Hepatic Dosing**: If the patient has impaired renal (eGFR < 60) or hepatic function, check if any post-discharge medications require dose adjustment. Generate a 'Dosage-Adjustment-Needed' alert with a suggestion.
+8.  **Polypharmacy Complexity Index**: If the patient is on more than 5 medications post-discharge, generate a 'Polypharmacy-Risk' alert. Mention the number of medications.
+9.  **Cognitive Impairment Screening**: If the patient is elderly (age > 65) and has a complex medication regimen (e.g., high polypharmacy score, multiple timing changes), generate a 'Cognitive-Screening-Recommended' alert.
 
 For each alert, generate a unique ID, type, severity, a concise description, and a 'reasoning' field. The reasoning should be a SHAP-style explanation (e.g., "TRIGGER: Statin added. REASON: Patient has Unstable Angina. ACTION: Recommended first-line therapy."). If no significant issues are found, return an empty array for the alerts.`,
 });

@@ -130,7 +130,7 @@ function InteractionAlerts({ patient }: { patient: Patient }) {
                         {alertSeverityIcons[alert.severity] || <XCircle className="h-5 w-5 text-destructive" />}
                         </div>
                         <div>
-                        <p className="font-semibold">{alert.type}</p>
+                        <p className="font-semibold">{alert.type.replace(/-/g, ' ')}</p>
                         <p className="text-sm text-muted-foreground">{alert.description}</p>
                         </div>
                     </div>

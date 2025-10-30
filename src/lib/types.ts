@@ -52,6 +52,9 @@ export type Alert = {
     | 'Anomaly-Detection'
     | 'Antibiotic-Stewardship'
     | 'Dosage-Adjustment-Needed'
+    | 'Polypharmacy-Risk'
+    | 'Drug-Food-Interaction'
+    | 'Cognitive-Screening-Recommended'
   severity: 'Critical' | 'Warning' | 'Info'
   description: string
   reasoning?: string
