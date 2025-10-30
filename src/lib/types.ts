@@ -19,6 +19,8 @@ export type Patient = {
   diagnosis: string
   followUp: string
   adherence: AdherenceEvent[]
+  egfr?: number
+  lft?: string
 }
 
 export type Vital = {
@@ -48,6 +50,8 @@ export type Alert = {
     | 'Dosage-Warning'
     | 'Formulary-Alert'
     | 'Anomaly-Detection'
+    | 'Antibiotic-Stewardship'
+    | 'Dosage-Adjustment-Needed'
   severity: 'Critical' | 'Warning' | 'Info'
   description: string
   reasoning?: string

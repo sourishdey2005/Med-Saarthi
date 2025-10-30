@@ -90,6 +90,8 @@ function InteractionAlerts({ patient }: { patient: Patient }) {
             age: patient.age,
             gender: patient.gender,
             conditions: patient.diagnosis,
+            egfr: patient.egfr,
+            lft: patient.lft,
           },
           preAdmissionMedications: patient.medications.preAdmission.map(m => m.name),
           postDischargeMedications: patient.medications.postDischarge.map(m => `${m.name} ${m.dosage}`),
@@ -103,7 +105,7 @@ function InteractionAlerts({ patient }: { patient: Patient }) {
     });
   };
 
-  const allAlerts = [...patient.alerts.filter(a => a.type !== 'Dose'), ...aiAlerts];
+  const allAlerts: AlertType[] = [...patient.alerts.filter(a => a.type !== 'Dose'), ...aiAlerts];
 
   return (
     <Card>

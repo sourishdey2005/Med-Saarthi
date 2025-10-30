@@ -39,10 +39,10 @@ export const patients: Patient[] = [
 ABHA ID: 12-3456-7890-1234
 DOB: 1956-03-15
 Allergies: Penicillin
-Past Medical History: Type 2 Diabetes (diagnosed 2010), Hypertension (diagnosed 2015).
+Past Medical History: Type 2 Diabetes (diagnosed 2010), Hypertension (diagnosed 2015), Chronic Kidney Disease Stage 3.
 Previous Surgeries: None.
 Family History: Father had coronary artery disease.`,
-    diagnosis: 'Unstable Angina (ICD-10: I20.0)',
+    diagnosis: 'Unstable Angina (ICD-10: I20.0), Community Acquired Pneumonia',
     followUp: 'Follow up with Dr. Mehta in Cardiology OPD after 1 week. Contact hospital at 011-23456789 for appointments.',
     adherence: [
         { id: 'adh1', medicationId: 'med1', medicationName: 'Metformin', scheduledTime: '2024-05-18T08:00:00', status: 'Taken', actualTime: '2024-05-18T08:05:00' },
@@ -60,6 +60,8 @@ Family History: Father had coronary artery disease.`,
         { id: 'adh11', medicationId: 'med1', medicationName: 'Metformin', scheduledTime: '2024-05-20T08:00:00', status: 'Pending' },
         { id: 'adh12', medicationId: 'med3', medicationName: 'Atorvastatin', scheduledTime: '2024-05-20T08:00:00', status: 'Pending' },
       ],
+    egfr: 45, // Represents eGFR value for renal function
+    lft: 'Slightly Elevated', // Represents Liver Function Test result
   },
   {
     id: '2',
