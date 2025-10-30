@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from 'react';
@@ -14,7 +15,7 @@ import {
   ChartLegend,
   ChartLegendContent,
 } from '@/components/ui/chart';
-import { Bar, CartesianGrid, XAxis, YAxis, BarChart as RechartsBarChart, ScatterChart, Scatter, Tooltip, Legend } from 'recharts';
+import { Bar, CartesianGrid, XAxis, YAxis, BarChart as RechartsBarChart, ScatterChart, Scatter, Legend } from 'recharts';
 import { format, parseISO, startOfDay } from 'date-fns';
 import PatientEngagementChart from './patient-engagement-chart';
 
@@ -109,7 +110,7 @@ const AdherenceCorrelationChart = ({ adherenceData }: { adherenceData: Adherence
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis type="number" dataKey="adherence" name="Doses Taken" unit="" />
                         <YAxis type="number" dataKey="recovery" name="Recovery Score" unit="%" />
-                        <Tooltip cursor={{ strokeDasharray: '3 3' }} content={<ChartTooltipContent />} />
+                        <ChartTooltip cursor={{ strokeDasharray: '3 3' }} content={<ChartTooltipContent />} />
                         <Legend />
                         <Scatter name="Recovery" data={chartData} fill="var(--color-recovery)" />
                     </ScatterChart>
@@ -144,7 +145,7 @@ const HomeMonitoringChart = ({ vitals }: { vitals: Vital[] }) => {
                         <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} />
                         <YAxis yAxisId="left" stroke="var(--color-Glucose)" />
                         <YAxis yAxisId="right" orientation="right" stroke="var(--color-Weight)" />
-                        <Tooltip content={<ChartTooltipContent />} />
+                        <ChartTooltip content={<ChartTooltipContent />} />
                         <Legend />
                         <Bar yAxisId="left" dataKey="Glucose" fill="var(--color-Glucose)" radius={4} />
                         <Bar yAxisId="right" dataKey="Weight" fill="var(--color-Weight)" radius={4} />

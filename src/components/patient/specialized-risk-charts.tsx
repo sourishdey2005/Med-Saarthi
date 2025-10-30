@@ -2,7 +2,7 @@
 'use client';
 
 import React from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, PieChart, Pie, Cell } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, PieChart, Pie, Cell } from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import type { Alert } from '@/lib/types';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '../ui/chart';
@@ -40,7 +40,7 @@ const BleedingRiskPlot = () => {
                 <XAxis dataKey="day" />
                 <YAxis yAxisId="left" label={{ value: 'INR', angle: -90, position: 'insideLeft' }} />
                 <YAxis yAxisId="right" orientation="right" label={{ value: 'Risk Score', angle: -90, position: 'insideRight' }} />
-                <Tooltip content={<ChartTooltipContent />} />
+                <ChartTooltip content={<ChartTooltipContent />} />
                 <Legend />
                 <Line yAxisId="left" type="monotone" dataKey="inr" stroke="var(--color-inr)" strokeWidth={2} name="INR" />
                 <Line yAxisId="right" type="monotone" dataKey="riskScore" stroke="var(--color-riskScore)" strokeWidth={2} name="Bleeding Risk" />
@@ -77,7 +77,7 @@ const AntibioticStewardshipWheel = () => {
                 <PolarAngleAxis dataKey="class" />
                 <PolarRadiusAxis angle={30} domain={[0, 100]}/>
                 <Radar name="Suitability" dataKey="suitability" stroke="var(--color-suitability)" fill="var(--color-suitability)" fillOpacity={0.6} />
-                <Tooltip content={<ChartTooltipContent />} />
+                <ChartTooltip content={<ChartTooltipContent />} />
             </RadarChart>
         </ChartContainer>
       </CardContent>
@@ -108,7 +108,7 @@ const FoodDrugInteractionMap = () => {
       <CardContent>
         <ChartContainer config={chartConfig} className="h-[250px] w-full">
             <PieChart>
-                <Tooltip content={<ChartTooltipContent nameKey="name" hideLabel />} />
+                <ChartTooltip content={<ChartTooltipContent nameKey="name" hideLabel />} />
                 <Pie data={data} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} label>
                      {data.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.fill} />
