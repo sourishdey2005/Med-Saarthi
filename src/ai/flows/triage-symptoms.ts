@@ -17,7 +17,7 @@ const SymptomSchema = z.object({
   notes: z.string(),
 });
 
-export const TriageSymptomsInputSchema = z.object({
+const TriageSymptomsInputSchema = z.object({
   patientContext: z.object({
     age: z.number(),
     gender: z.string(),
@@ -27,7 +27,7 @@ export const TriageSymptomsInputSchema = z.object({
 });
 export type TriageSymptomsInput = z.infer<typeof TriageSymptomsInputSchema>;
 
-export const TriageSymptomsOutputSchema = z.object({
+const TriageSymptomsOutputSchema = z.object({
   triageLevel: z.enum(['Routine', 'Urgent', 'Emergency']),
   recommendation: z.string().describe('A concise recommendation for the clinician based on the triage level and symptoms.'),
   reasoning: z.string().describe('A brief explanation for the triage assessment.'),
