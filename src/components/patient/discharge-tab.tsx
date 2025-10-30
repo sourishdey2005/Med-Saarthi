@@ -4,6 +4,7 @@ import React, { useState, useTransition } from 'react'
 import Image from 'next/image'
 import { generateMultilingualDischargeSummary } from '@/ai/flows/generate-multilingual-discharge-summary'
 import { explainMedication } from '@/ai/flows/explain-medication'
+import { generateAudioGuidance } from '@/ai/flows/generate-audio-guidance'
 import type { Patient } from '@/lib/types'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -68,6 +69,57 @@ function MedicationExplanationDialog({ medicationName, language }: { medicationN
     </Dialog>
   );
 }
+
+function AudioGuidanceDialog({ summary, language }: { summary: string; language: string }) {
+  const [audioDataUri, setAudioDataUri] = useState('');
+  const [isPending, startTransition] = useTransition();
+  const { toast } = useToast();
+
+  const handleGenerateAudio = () => {
+    if (!summary) {
+      toast({ title: 'No Summary', description: 'Please generate a summary first.', variant: 'destructive' });
+      return;
+    }
+    startTransition(async () => {
+      try {
+        const result = await generateAudioGuidance({ text: summary, language });
+        setAudioDataUri(result.audioDataUri);
+      } catch (error) {
+        console.error(error);
+        toast({ title: 'Audio Generation Failed', description: 'Could not generate audio guidance.', variant: 'destructive' });
+      }
+    });
+  };
+
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="outline" size="sm" onClick={handleGenerateAudio} disabled={!summary}>
+          <Volume2 className="mr-2 h-4 w-4" />
+          Audio Guidance
+        </Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Audio Guidance</DialogTitle>
+          <DialogDescription>Listen to the discharge summary instructions.</DialogDescription>
+        </DialogHeader>
+        <div className="flex items-center justify-center p-4">
+          {isPending ? (
+            <Loader2 className="h-10 w-10 animate-spin text-primary" />
+          ) : audioDataUri ? (
+            <audio controls src={audioDataUri} className="w-full">
+              Your browser does not support the audio element.
+            </audio>
+          ) : (
+            <p className="text-muted-foreground">Click the button to generate audio.</p>
+          )}
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 
 export default function DischargeTab({ patient }: DischargeTabProps) {
   const [isPending, startTransition] = useTransition()
@@ -215,7 +267,7 @@ export default function DischargeTab({ patient }: DischargeTabProps) {
                   <div className="flex flex-col sm:flex-row gap-4 items-center justify-between rounded-lg border p-4">
                       <div className="space-y-2">
                           <h4 className="font-semibold">Verification & Guidance</h4>
-                          <Button variant="outline" size="sm"><Volume2 className="mr-2 h-4 w-4"/>Audio Guidance</Button>
+                          <AudioGuidanceDialog summary={summary} language={formState.languagePreference} />
                           <p className="text-xs text-muted-foreground">Scan for pharmacist verification.</p>
                       </div>
                        {qrCodeImage && (
@@ -241,7 +293,7 @@ export default function DischargeTab({ patient }: DischargeTabProps) {
             <CardHeader>
                 <CardTitle>Discharge Readiness</CardTitle>
                 <CardDescription>At-a-glance view of patient's readiness for discharge.</CardDescription>
-            </CardHeader>
+            </Header>
             <CardContent>
                 <DischargeReadinessChart data={readinessData} />
             </CardContent>

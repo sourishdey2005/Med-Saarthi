@@ -32,7 +32,7 @@ const prompt = ai.definePrompt({
   name: 'generateMultilingualDischargeSummaryPrompt',
   input: {schema: GenerateMultilingualDischargeSummaryInputSchema},
   output: {schema: GenerateMultilingualDischargeSummaryOutputSchema},
-  prompt: `You are a clinical expert responsible for generating discharge summaries for patients in their preferred language.
+  prompt: `You are a clinical expert responsible for generating discharge summaries for patients in their preferred language. Your response must be culturally and regionally aware, especially regarding dietary advice.
 
 Generate a discharge summary in {{{languagePreference}}} based on the following information:
 
@@ -41,7 +41,16 @@ Diagnosis: {{{diagnosis}}}
 Medications: {{{medications}}}
 Follow-up Instructions: {{{followUp}}}
 
-Ensure the discharge summary is easy to understand and provides clear instructions for the patient.`,
+Instructions:
+1.  **Language**: The entire summary must be in the requested language: {{{languagePreference}}}.
+2.  **Clarity**: Use simple, clear language suitable for a patient with low health literacy.
+3.  **Cultural Context**: When providing advice (e.g., diet), consider common Indian dietary habits. For example, if mentioning dietary restrictions related to medication, use examples of common Indian foods to avoid.
+4.  **Structure**: The summary should be well-structured with clear headings for Diagnosis, Medications, and Follow-up.
+5.  **Tone**: Maintain a supportive and empathetic tone.
+
+Example for dietary advice: If a patient is on warfarin, instead of just "Avoid Vitamin K rich foods," you might add "(जैसे की पालक, सरसों का साग, और अन्य हरी पत्तेदार सब्जियाँ कम खाएं)" if the language is Hindi.
+
+Ensure the final discharge summary is easy to understand and provides clear, actionable instructions for the patient.`,
 });
 
 const generateMultilingualDischargeSummaryFlow = ai.defineFlow(
