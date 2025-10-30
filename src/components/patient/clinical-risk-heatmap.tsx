@@ -3,43 +3,62 @@
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import type { Medication } from '@/lib/types';
+import type { Medication, Patient } from '@/lib/types';
 
 interface ClinicalRiskHeatmapProps {
-  medications: Medication[];
+  patient: Patient;
 }
 
 const timeSlots = ['Morning', 'Afternoon', 'Evening', 'Night'];
 
-// Simple logic to generate a risk score - in a real app, this would be complex
-const getRiskScore = (medName: string, time: string) => {
-  let score = Math.random() * 20; // Base random risk
+// More realistic risk scoring logic
+const getRiskScore = (medName: string, time: string, patient: Patient) => {
+  let score = 5; // Base risk
+
+  // Medication-specific risks
+  if (medName.toLowerCase().includes('aspirin')) score += 15;
+  if (medName.toLowerCase().includes('metformin')) score += 10;
+  if (medName.toLowerCase().includes('atorvastatin')) score += 10;
+  if (medName.toLowerCase().includes('warfarin')) score += 40;
+  if (medName.toLowerCase().includes('amlodipine')) score += 5;
+
+  // Time-specific risks
+  if (medName.toLowerCase().includes('atorvastatin') && time !== 'Night') {
+    score += 20; // Statins are often best taken at night
+  }
   if (medName.toLowerCase().includes('aspirin') && (time === 'Morning' || time === 'Afternoon')) {
-    score += 30;
+    score += 10; // GI upset risk
   }
-  if (medName.toLowerCase().includes('atorvastatin') && time === 'Night') {
-    score += 25;
+
+  // Patient-specific risks
+  if (patient.age > 75) {
+    score += 15; // General elderly risk
   }
-  if (medName.toLowerCase().includes('metformin') && (time === 'Morning' || time === 'Evening')) {
-    score += 15;
+  if (patient.egfr && patient.egfr < 60) {
+    score += 20; // Renal impairment risk
+     if (medName.toLowerCase().includes('metformin')) {
+        score += 30; // High risk for metformin with CKD
+     }
   }
-  return Math.min(100, score);
+
+  return Math.min(100, score + Math.random() * 10); // Add a little randomness
 };
 
 const getRiskColor = (score: number) => {
-  if (score > 60) return 'bg-red-500/30';
-  if (score > 30) return 'bg-yellow-500/30';
+  if (score > 70) return 'bg-red-500/30';
+  if (score > 40) return 'bg-yellow-500/30';
   return 'bg-green-500/20';
 };
 
-export default function ClinicalRiskHeatmap({ medications }: ClinicalRiskHeatmapProps) {
+export default function ClinicalRiskHeatmap({ patient }: ClinicalRiskHeatmapProps) {
+  const medications = patient.medications.postDischarge;
   const medNames = [...new Set(medications.map((m) => m.name))];
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Clinical Risk Heatmap</CardTitle>
-        <CardDescription>Potential risk hotspots based on medication timing.</CardDescription>
+        <CardTitle>Dosing Safety Heatmap</CardTitle>
+        <CardDescription>Risk hotspots by medication, time, age, and renal status.</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="overflow-x-auto">
@@ -57,7 +76,7 @@ export default function ClinicalRiskHeatmap({ medications }: ClinicalRiskHeatmap
                 <TableRow key={medName}>
                   <TableCell className="font-medium">{medName}</TableCell>
                   {timeSlots.map((time) => {
-                    const risk = getRiskScore(medName, time);
+                    const risk = getRiskScore(medName, time, patient);
                     return (
                       <TableCell key={time} className={`text-center ${getRiskColor(risk)}`}>
                         <div className="flex h-12 w-full items-center justify-center rounded-md">

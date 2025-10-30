@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { MedicalHistorySummary } from './medical-history-summary'
 import VitalsChart from './vitals-chart'
 import { AlertTriangle, Info, ShieldAlert } from 'lucide-react'
-import CareTransitionSankey from './care-transition-sankey'
+import MedicationReconciliationSankey from './medication-reconciliation-sankey'
 
 interface OverviewTabProps {
   patient: Patient
@@ -18,27 +18,42 @@ const alertIcons = {
   Info: <Info className="h-5 w-5 text-blue-500" />,
 }
 
-const sankeyData = {
-    nodes: [
-        { name: 'Admission' },
-        { name: 'Diagnosis' },
-        { name: 'Treatment' },
-        { name: 'Reconciliation' },
-        { name: 'Education' },
-        { name: 'Discharge' }
-    ],
-    links: [
-        { source: 0, target: 1, value: 100 },
-        { source: 1, target: 2, value: 100 },
-        { source: 2, target: 3, value: 80 },
-        { source: 2, target: 5, value: 20 }, // 20% skip reconciliation
-        { source: 3, target: 4, value: 80 },
-        { source: 4, target: 5, value: 80 }
-    ]
-};
-
 
 export default function OverviewTab({ patient }: OverviewTabProps) {
+  
+  const preAdmissionMeds = patient.medications.preAdmission.map(m => m.name);
+  const postDischargeMeds = patient.medications.postDischarge.map(m => m.name);
+  
+  const allMeds = [...new Set([...preAdmissionMeds, ...postDischargeMeds])];
+  const nodes = [
+    { name: 'Pre-Admission' },
+    { name: 'Post-Discharge' },
+    ...allMeds.map(name => ({ name }))
+  ];
+
+  const links: { source: number; target: number; value: number }[] = [];
+
+  preAdmissionMeds.forEach(med => {
+    const medIndex = allMeds.indexOf(med) + 2;
+    links.push({ source: 0, target: medIndex, value: 1 });
+
+    if(postDischargeMeds.includes(med)) {
+        // Continued
+        links.push({ source: medIndex, target: 1, value: 1 });
+    }
+  });
+
+  postDischargeMeds.forEach(med => {
+    if (!preAdmissionMeds.includes(med)) {
+        // New
+        const medIndex = allMeds.indexOf(med) + 2;
+        links.push({ source: 0, target: medIndex, value: 0 }); // Show node but not from pre-admission
+        links.push({ source: medIndex, target: 1, value: 1 });
+    }
+  });
+  
+  const sankeyData = { nodes, links };
+
   return (
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
       <div className="lg:col-span-2">
@@ -74,7 +89,7 @@ export default function OverviewTab({ patient }: OverviewTabProps) {
       </div>
 
        <div className="md:col-span-2 lg:col-span-3">
-        <CareTransitionSankey data={sankeyData} />
+        <MedicationReconciliationSankey data={sankeyData} />
       </div>
     </div>
   )

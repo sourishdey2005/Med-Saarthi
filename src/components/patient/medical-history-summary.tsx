@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Textarea } from '@/components/ui/textarea'
 import { Bot, Loader2 } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
+import { Badge } from '../ui/badge'
 
 interface MedicalHistorySummaryProps {
   patient: Patient
@@ -39,6 +40,8 @@ export function MedicalHistorySummary({ patient }: MedicalHistorySummaryProps) {
     })
   }
 
+  const allergies = patient.abhaRecord.match(/Allergies: (.*)/)?.[1] || 'None listed';
+
   return (
     <Card className="h-full">
       <CardHeader>
@@ -48,6 +51,10 @@ export function MedicalHistorySummary({ patient }: MedicalHistorySummaryProps) {
         </CardDescription>
       </CardHeader>
       <CardContent className="grid gap-4">
+        <div className="space-y-1">
+          <h4 className="text-sm font-medium">Allergies</h4>
+          <Badge variant="destructive">{allergies}</Badge>
+        </div>
         <div>
           <label htmlFor="abha-record" className="text-sm font-medium">
             ABHA Health Record

@@ -161,7 +161,7 @@ export default function MedicationTab({ patient }: MedicationTabProps) {
 
       <InteractionAlerts patient={patient} />
 
-      <ClinicalRiskHeatmap medications={patient.medications.postDischarge} />
+      <ClinicalRiskHeatmap patient={patient} />
     </div>
   );
 }
