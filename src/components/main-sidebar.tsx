@@ -35,17 +35,17 @@ export function MainSidebar() {
       icon: LayoutDashboard,
     },
     {
-      href: '/patients',
+      href: '/dashboard/patients',
       label: 'Patients',
       icon: Users,
     },
     {
-      href: '/reconciliation',
+      href: '/dashboard/reconciliation',
       label: 'Reconciliation',
       icon: HeartPulse,
     },
     {
-      href: '/settings',
+      href: '/dashboard/settings',
       label: 'Settings',
       icon: Settings,
     },
@@ -72,7 +72,7 @@ export function MainSidebar() {
             <SidebarMenuItem key={item.href}>
               <Link href={item.href}>
                 <SidebarMenuButton
-                  isActive={pathname.startsWith(item.href)}
+                  isActive={pathname.startsWith(item.href) && (item.href === '/dashboard' ? pathname === item.href : true)}
                   tooltip={item.label}
                 >
                   <item.icon className="h-5 w-5" />
@@ -95,7 +95,7 @@ export function MainSidebar() {
             <span className="text-xs text-muted-foreground">Cardiologist</span>
           </div>
         </div>
-        <Link href="/" className="w-full">
+        <Link href="/login" className="w-full">
             <Button variant="outline" size="sm" className="w-full">
                 <LogOut className="mr-2 h-4 w-4" />
                 Logout

@@ -26,7 +26,7 @@ export default function PatientDetailPage({ params }: { params: { id: string } }
         title={patient.name}
         breadcrumbs={[
           { href: '/dashboard', label: 'Dashboard' },
-          { href: `/patients/${patient.id}`, label: 'Patient Details' },
+          { href: `/dashboard/patients/${patient.id}`, label: 'Patient Details' },
         ]}
         actions={<PatientHeaderActions />}
       />

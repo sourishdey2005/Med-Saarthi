@@ -62,7 +62,7 @@ export function ReconciliationList() {
                                 </TableCell>
                                 <TableCell className="text-right">
                                     <Button asChild variant="outline" size="sm">
-                                        <Link href={`/patients/${item.patientId}?tab=medication`}>
+                                        <Link href={`/dashboard/patients/${item.patientId}?tab=medication`}>
                                             Start Reconciliation <ArrowRight className="ml-2 h-4 w-4" />
                                         </Link>
                                     </Button>

@@ -54,7 +54,7 @@ export function PatientList() {
             </CardContent>
             <CardFooter>
                 <Button asChild className="w-full">
-                <Link href={`/patients/${patient.id}`}>View Details</Link>
+                <Link href={`/dashboard/patients/${patient.id}`}>View Details</Link>
                 </Button>
             </CardFooter>
             </Card>

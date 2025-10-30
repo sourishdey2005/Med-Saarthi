@@ -11,7 +11,7 @@ export default function SettingsPage() {
     <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-6">
       <PageHeader 
         title="Settings" 
-        breadcrumbs={[{ href: '/dashboard', label: 'Dashboard' }, { href: '/settings', label: 'Settings' }]}
+        breadcrumbs={[{ href: '/dashboard', label: 'Dashboard' }, { href: '/dashboard/settings', label: 'Settings' }]}
       />
       <div className="grid gap-6">
         <Card>
