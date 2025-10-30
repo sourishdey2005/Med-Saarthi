@@ -11,6 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 import { AlertTriangle, ArrowRight, Bot, CheckCircle, Info, Loader2, MinusCircle, PlusCircle, ShieldAlert, XCircle } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
 import ClinicalRiskHeatmap from './clinical-risk-heatmap';
+import SpecializedRiskCharts from './specialized-risk-charts';
 
 
 interface MedicationTabProps {
@@ -77,35 +78,9 @@ function MedicationList({ title, medications }: { title: string; medications: Me
   );
 }
 
-function InteractionAlerts({ patient }: { patient: Patient }) {
-  const [isPending, startTransition] = useTransition();
-  const { toast } = useToast();
-  const [aiAlerts, setAiAlerts] = useState<AlertType[]>([]);
+function InteractionAlerts({ patient, alerts, setAlerts, isPending, handleAnalyze }: { patient: Patient, alerts: AlertType[], setAlerts: (alerts: AlertType[]) => void, isPending: boolean, handleAnalyze: () => void}) {
 
-  const handleAnalyzeMedications = () => {
-    startTransition(async () => {
-      try {
-        const result = await reconcileMedications({
-          patientInfo: {
-            age: patient.age,
-            gender: patient.gender,
-            conditions: patient.diagnosis,
-            egfr: patient.egfr,
-            lft: patient.lft,
-          },
-          preAdmissionMedications: patient.medications.preAdmission.map(m => m.name),
-          postDischargeMedications: patient.medications.postDischarge.map(m => `${m.name} ${m.dosage}`),
-        });
-        setAiAlerts(result.alerts);
-        toast({ title: 'Analysis Complete', description: `Found ${result.alerts.length} potential issues.` });
-      } catch (error) {
-        console.error(error);
-        toast({ title: 'Error', description: 'Failed to analyze medications.', variant: 'destructive' });
-      }
-    });
-  };
-
-  const allAlerts: AlertType[] = [...patient.alerts, ...aiAlerts];
+  const allAlerts: AlertType[] = [...patient.alerts, ...alerts];
 
   return (
     <Card>
@@ -114,7 +89,7 @@ function InteractionAlerts({ patient }: { patient: Patient }) {
           <CardTitle>Interaction & Safety Alerts</CardTitle>
           <CardDescription>AI-powered analysis of potential risks and interactions.</CardDescription>
         </div>
-        <Button onClick={handleAnalyzeMedications} disabled={isPending}>
+        <Button onClick={handleAnalyze} disabled={isPending}>
           {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Bot className="mr-2 h-4 w-4" />}
           Run AI Safety Check
         </Button>
@@ -152,6 +127,35 @@ function InteractionAlerts({ patient }: { patient: Patient }) {
 
 
 export default function MedicationTab({ patient }: MedicationTabProps) {
+  const [isPending, startTransition] = useTransition();
+  const { toast } = useToast();
+  const [aiAlerts, setAiAlerts] = useState<AlertType[]>([]);
+
+  const handleAnalyzeMedications = () => {
+    startTransition(async () => {
+      try {
+        const result = await reconcileMedications({
+          patientInfo: {
+            age: patient.age,
+            gender: patient.gender,
+            conditions: patient.diagnosis,
+            egfr: patient.egfr,
+            lft: patient.lft,
+          },
+          preAdmissionMedications: patient.medications.preAdmission.map(m => m.name),
+          postDischargeMedications: patient.medications.postDischarge.map(m => `${m.name} ${m.dosage}`),
+        });
+        setAiAlerts(result.alerts);
+        toast({ title: 'Analysis Complete', description: `Found ${result.alerts.length} potential issues.` });
+      } catch (error) {
+        console.error(error);
+        toast({ title: 'Error', description: 'Failed to analyze medications.', variant: 'destructive' });
+      }
+    });
+  };
+
+  const allAlerts: AlertType[] = [...patient.alerts, ...aiAlerts];
+
   return (
     <div className="grid gap-6">
       <div className="grid md:grid-cols-2 gap-6">
@@ -159,7 +163,15 @@ export default function MedicationTab({ patient }: MedicationTabProps) {
           <MedicationList title="Post-Discharge Medications" medications={patient.medications.postDischarge} />
       </div>
 
-      <InteractionAlerts patient={patient} />
+      <InteractionAlerts 
+        patient={patient} 
+        alerts={aiAlerts}
+        setAlerts={setAiAlerts}
+        isPending={isPending}
+        handleAnalyze={handleAnalyzeMedications}
+      />
+
+      <SpecializedRiskCharts alerts={allAlerts} />
 
       <ClinicalRiskHeatmap patient={patient} />
     </div>
