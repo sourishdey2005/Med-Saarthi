@@ -293,7 +293,7 @@ export default function DischargeTab({ patient }: DischargeTabProps) {
             <CardHeader>
                 <CardTitle>Discharge Readiness</CardTitle>
                 <CardDescription>At-a-glance view of patient's readiness for discharge.</CardDescription>
-            </Header>
+            </CardHeader>
             <CardContent>
                 <DischargeReadinessChart data={readinessData} />
             </CardContent>
