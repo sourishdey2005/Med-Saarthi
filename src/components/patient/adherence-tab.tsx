@@ -1,9 +1,9 @@
 'use client';
 
 import React from 'react';
-import type { Patient, AdherenceEvent } from '@/lib/types';
+import type { Patient, AdherenceEvent, Vital } from '@/lib/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { CheckCircle2, XCircle, Hourglass, CalendarDays, BarChart, BellRing } from 'lucide-react';
+import { CheckCircle2, XCircle, Hourglass, CalendarDays, BarChart, BellRing, TrendingUp, HeartPulse } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Table, TableBody, TableCell, TableHeader, TableHead, TableRow } from '@/components/ui/table';
@@ -14,7 +14,7 @@ import {
   ChartLegend,
   ChartLegendContent,
 } from '@/components/ui/chart';
-import { Bar, CartesianGrid, XAxis, YAxis, BarChart as RechartsBarChart } from 'recharts';
+import { Bar, CartesianGrid, XAxis, YAxis, BarChart as RechartsBarChart, ScatterChart, Scatter, Tooltip, Legend } from 'recharts';
 import { format, parseISO, startOfDay } from 'date-fns';
 import PatientEngagementChart from './patient-engagement-chart';
 
@@ -73,6 +73,89 @@ const AdherenceChart = ({ adherenceData }: { adherenceData: AdherenceEvent[] }) 
   );
 };
 
+const AdherenceCorrelationChart = ({ adherenceData }: { adherenceData: AdherenceEvent[] }) => {
+    const takenDoses = adherenceData.filter(e => e.status === 'Taken');
+    const adherenceRateByDay = takenDoses.reduce((acc, event) => {
+        const day = format(startOfDay(parseISO(event.scheduledTime)), 'yyyy-MM-dd');
+        if (!acc[day]) {
+            acc[day] = { count: 0, totalScore: 0 };
+        }
+        acc[day].count += 1;
+        acc[day].totalScore += event.recoveryScore || 0;
+        return acc;
+    }, {} as Record<string, { count: number, totalScore: number }>);
+
+    const chartData = Object.keys(adherenceRateByDay).map(day => {
+        const entry = adherenceRateByDay[day];
+        return {
+            adherence: entry.count, // Using count as a proxy for daily adherence
+            recovery: entry.totalScore / entry.count,
+        };
+    });
+
+    const chartConfig = {
+        recovery: { label: 'Recovery Score', color: 'hsl(var(--chart-1))' }
+    }
+
+    return (
+        <Card>
+            <CardHeader>
+                <CardTitle>Adherence-Outcome Correlation</CardTitle>
+                <CardDescription>Correlation between daily adherence and recovery score.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <ChartContainer config={chartConfig} className="h-[200px] w-full">
+                    <ScatterChart margin={{ top: 20, right: 20, bottom: 10, left: -10 }}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis type="number" dataKey="adherence" name="Doses Taken" unit="" />
+                        <YAxis type="number" dataKey="recovery" name="Recovery Score" unit="%" />
+                        <Tooltip cursor={{ strokeDasharray: '3 3' }} content={<ChartTooltipContent />} />
+                        <Legend />
+                        <Scatter name="Recovery" data={chartData} fill="var(--color-recovery)" />
+                    </ScatterChart>
+                </ChartContainer>
+            </CardContent>
+        </Card>
+    )
+}
+
+const HomeMonitoringChart = ({ vitals }: { vitals: Vital[] }) => {
+    const chartData = vitals.map(v => ({
+        date: format(parseISO(v.date), 'MMM dd'),
+        Glucose: v.glucose,
+        Weight: v.weight,
+    }));
+
+    const chartConfig = {
+        Glucose: { label: 'Glucose (mg/dL)', color: 'hsl(var(--chart-3))' },
+        Weight: { label: 'Weight (kg)', color: 'hsl(var(--chart-4))' },
+    };
+
+    return (
+        <Card>
+            <CardHeader>
+                <CardTitle>Home Monitoring</CardTitle>
+                <CardDescription>Trends for blood glucose and weight.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <ChartContainer config={chartConfig} className="h-[200px] w-full">
+                    <RechartsBarChart data={chartData} margin={{ top: 20, right: 10, left: -20, bottom: 0 }}>
+                        <CartesianGrid vertical={false} />
+                        <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} />
+                        <YAxis yAxisId="left" stroke="var(--color-Glucose)" />
+                        <YAxis yAxisId="right" orientation="right" stroke="var(--color-Weight)" />
+                        <Tooltip content={<ChartTooltipContent />} />
+                        <Legend />
+                        <Bar yAxisId="left" dataKey="Glucose" fill="var(--color-Glucose)" radius={4} />
+                        <Bar yAxisId="right" dataKey="Weight" fill="var(--color-Weight)" radius={4} />
+                    </RechartsBarChart>
+                </ChartContainer>
+            </CardContent>
+        </Card>
+    );
+};
+
+
 export default function AdherenceTab({ patient }: AdherenceTabProps) {
   const totalDoses = patient.adherence.length;
   const takenDoses = patient.adherence.filter((a) => a.status === 'Taken').length;
@@ -130,6 +213,12 @@ export default function AdherenceTab({ patient }: AdherenceTabProps) {
         <AdherenceChart adherenceData={patient.adherence} />
         <PatientEngagementChart data={engagementData} />
       </div>
+      
+      <div className="grid gap-6 md:grid-cols-2">
+        <HomeMonitoringChart vitals={patient.vitals} />
+        <AdherenceCorrelationChart adherenceData={patient.adherence} />
+      </div>
+
 
        <Card>
         <CardHeader>

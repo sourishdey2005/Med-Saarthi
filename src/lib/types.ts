@@ -29,6 +29,8 @@ export type Vital = {
   systolic: number
   diastolic: number
   heartRate: number
+  glucose?: number
+  weight?: number
 }
 
 export type Medication = {
@@ -77,6 +79,7 @@ export type AdherenceEvent = {
   scheduledTime: string
   status: 'Taken' | 'Missed' | 'Pending'
   actualTime?: string
+  recoveryScore?: number
 }
 
 export type SymptomLog = {
@@ -85,4 +88,7 @@ export type SymptomLog = {
     symptom: string;
     severity: 'Mild' | 'Moderate' | 'Severe';
     notes: string;
+    stress?: number; // Scale of 1-10
+    mood?: number; // Scale of 1-10
+    worry?: number; // Scale of 1-10
 }

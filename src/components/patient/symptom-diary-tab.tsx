@@ -8,9 +8,11 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Bot, Loader2, Siren, ShieldAlert, AlertTriangle, Info } from 'lucide-react';
+import { Bot, Loader2, Siren, ShieldAlert, AlertTriangle, Info, TrendingUp } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { format, parseISO } from 'date-fns';
+import { Area, AreaChart, CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent } from '@/components/ui/chart';
 
 interface SymptomDiaryTabProps {
   patient: Patient;
@@ -32,6 +34,44 @@ const triageAlertVariants: { [key in TriageSymptomsOutput['triageLevel']]: 'dest
     Emergency: 'destructive',
     Urgent: 'destructive',
     Routine: 'default',
+};
+
+const MentalWellbeingChart = ({ symptoms }: { symptoms: SymptomLog[] }) => {
+    const chartData = symptoms.map(s => ({
+        date: format(parseISO(s.date), 'MMM dd'),
+        Stress: s.stress,
+        Mood: s.mood,
+        Worry: s.worry,
+    }));
+
+    const chartConfig = {
+        Stress: { label: 'Stress', color: 'hsl(var(--chart-1))' },
+        Mood: { label: 'Mood', color: 'hsl(var(--chart-2))' },
+        Worry: { label: 'Worry', color: 'hsl(var(--chart-5))' },
+    };
+
+    return (
+        <Card>
+            <CardHeader>
+                <CardTitle>Mental Wellbeing Trend</CardTitle>
+                <CardDescription>Self-reported scores for stress, mood, and worry (1-10).</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <ChartContainer config={chartConfig} className="h-[250px] w-full">
+                    <LineChart data={chartData} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="date" />
+                        <YAxis domain={[0, 10]} />
+                        <Tooltip content={<ChartTooltipContent />} />
+                        <Legend />
+                        <Line type="monotone" dataKey="Stress" stroke="var(--color-Stress)" strokeWidth={2} />
+                        <Line type="monotone" dataKey="Mood" stroke="var(--color-Mood)" strokeWidth={2} />
+                        <Line type="monotone" dataKey="Worry" stroke="var(--color-Worry)" strokeWidth={2} />
+                    </LineChart>
+                </ChartContainer>
+            </CardContent>
+        </Card>
+    );
 };
 
 export default function SymptomDiaryTab({ patient }: SymptomDiaryTabProps) {
@@ -61,6 +101,21 @@ export default function SymptomDiaryTab({ patient }: SymptomDiaryTabProps) {
 
   return (
     <div className="grid gap-6">
+      {triageResult && (
+        <Alert variant={triageAlertVariants[triageResult.triageLevel]}>
+          {triageAlertIcons[triageResult.triageLevel]}
+          <AlertTitle>AI Triage Assessment: {triageResult.triageLevel}</AlertTitle>
+          <AlertDescription>
+            <p className="font-semibold mt-2">Recommendation:</p>
+            <p>{triageResult.recommendation}</p>
+            <p className="font-semibold mt-2 text-xs">Reasoning:</p>
+            <p className="text-xs">{triageResult.reasoning}</p>
+          </AlertDescription>
+        </Alert>
+      )}
+
+       <MentalWellbeingChart symptoms={patient.symptoms} />
+
       <Card>
         <CardHeader className="flex flex-row items-start justify-between">
           <div>
@@ -105,19 +160,6 @@ export default function SymptomDiaryTab({ patient }: SymptomDiaryTabProps) {
           </Table>
         </CardContent>
       </Card>
-
-      {triageResult && (
-        <Alert variant={triageAlertVariants[triageResult.triageLevel]}>
-          {triageAlertIcons[triageResult.triageLevel]}
-          <AlertTitle>AI Triage Assessment: {triageResult.triageLevel}</AlertTitle>
-          <AlertDescription>
-            <p className="font-semibold mt-2">Recommendation:</p>
-            <p>{triageResult.recommendation}</p>
-            <p className="font-semibold mt-2 text-xs">Reasoning:</p>
-            <p className="text-xs">{triageResult.reasoning}</p>
-          </AlertDescription>
-        </Alert>
-      )}
     </div>
   );
 }
