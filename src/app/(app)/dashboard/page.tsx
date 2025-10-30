@@ -1,5 +1,11 @@
 import { PageHeader } from '@/components/page-header'
 import { PatientList } from '@/components/dashboard/patient-list'
+import AuditLogTimeline from '@/components/dashboard/audit-log-timeline'
+import AbdmIntegrationChart from '@/components/dashboard/abdm-integration-chart'
+import MedErrorReductionChart from '@/components/dashboard/med-error-reduction-chart'
+import BenchmarkRadarChart from '@/components/dashboard/benchmark-radar-chart'
+import CostReductionChart from '@/components/dashboard/cost-reduction-chart'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 
 export default function DashboardPage() {
   return (
@@ -9,6 +15,21 @@ export default function DashboardPage() {
         breadcrumbs={[{ href: '/dashboard', label: 'Dashboard' }]}
       />
       <div className="grid gap-6">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <AbdmIntegrationChart />
+            <MedErrorReductionChart />
+            <CostReductionChart />
+            <BenchmarkRadarChart />
+            <Card className="lg:col-span-2">
+              <CardHeader>
+                <CardTitle>Audit Log</CardTitle>
+                <CardDescription>Recent activities across the platform.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <AuditLogTimeline />
+              </CardContent>
+            </Card>
+        </div>
         <PatientList />
       </div>
     </main>
