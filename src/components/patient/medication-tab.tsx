@@ -8,7 +8,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { AlertTriangle, ArrowRight, Bot, CheckCircle, Loader2, MinusCircle, PlusCircle, ShieldAlert, XCircle } from 'lucide-react';
+import { AlertTriangle, ArrowRight, Bot, CheckCircle, Info, Loader2, MinusCircle, PlusCircle, ShieldAlert, XCircle } from 'lucide-react';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
+
 
 interface MedicationTabProps {
   patient: Patient;
@@ -31,7 +33,7 @@ const statusColors: { [key: string]: 'default' | 'secondary' | 'destructive' | '
 const alertSeverityIcons: { [key: string]: React.ReactNode } = {
   Critical: <ShieldAlert className="h-5 w-5 text-destructive" />,
   Warning: <AlertTriangle className="h-5 w-5 text-yellow-500" />,
-  Info: <CheckCircle className="h-5 w-5 text-blue-500" />,
+  Info: <Info className="h-5 w-5 text-blue-500" />,
 };
 
 
@@ -106,8 +108,8 @@ function InteractionAlerts({ patient }: { patient: Patient }) {
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
         <div>
-          <CardTitle>Interaction Alerts</CardTitle>
-          <CardDescription>Potential drug-drug, drug-disease, and allergy interactions.</CardDescription>
+          <CardTitle>Interaction & Safety Alerts</CardTitle>
+          <CardDescription>AI-powered analysis of potential risks and interactions.</CardDescription>
         </div>
         <Button onClick={handleAnalyzeMedications} disabled={isPending}>
           {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Bot className="mr-2 h-4 w-4" />}
@@ -116,21 +118,29 @@ function InteractionAlerts({ patient }: { patient: Patient }) {
       </CardHeader>
       <CardContent>
         {allAlerts.length > 0 ? (
-          <ul className="space-y-3">
+          <Accordion type="multiple" className="space-y-3">
             {allAlerts.map((alert, index) => (
-              <li key={alert.id || index} className="flex items-start gap-3 rounded-md border p-3">
-                <div>
-                  {alertSeverityIcons[alert.severity] || <XCircle className="h-5 w-5 text-destructive" />}
-                </div>
-                <div>
-                  <p className="font-semibold">{alert.type}</p>
-                  <p className="text-sm text-muted-foreground">{alert.description}</p>
-                </div>
-              </li>
+              <AccordionItem key={alert.id || index} value={`item-${index}`} className="rounded-md border p-3">
+                 <AccordionTrigger className="w-full text-left hover:no-underline p-0">
+                    <div className="flex items-start gap-3 flex-1">
+                        <div>
+                        {alertSeverityIcons[alert.severity] || <XCircle className="h-5 w-5 text-destructive" />}
+                        </div>
+                        <div>
+                        <p className="font-semibold">{alert.type}</p>
+                        <p className="text-sm text-muted-foreground">{alert.description}</p>
+                        </div>
+                    </div>
+                </AccordionTrigger>
+                <AccordionContent className="pt-4 text-xs text-muted-foreground pl-8">
+                  <p className='font-semibold mb-1'>XAI Reasoning:</p>
+                  <p>{alert.reasoning || "No detailed reasoning available."}</p>
+                </AccordionContent>
+              </AccordionItem>
             ))}
-          </ul>
+          </Accordion>
         ) : (
-          <p className="text-sm text-muted-foreground">No interaction alerts flagged.</p>
+          <p className="text-sm text-muted-foreground text-center py-8">No interaction alerts flagged. Run the AI safety check.</p>
         )}
       </CardContent>
     </Card>

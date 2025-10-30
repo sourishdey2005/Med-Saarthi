@@ -18,6 +18,7 @@ export type Patient = {
   abhaRecord: string
   diagnosis: string
   followUp: string
+  adherence: AdherenceEvent[]
 }
 
 export type Vital = {
@@ -38,9 +39,18 @@ export type Medication = {
 
 export type Alert = {
   id: string
-  type: 'Drug-Drug' | 'Drug-Disease' | 'Allergy' | 'Dose'
+  type:
+    | 'Drug-Drug'
+    | 'Drug-Disease'
+    | 'Allergy'
+    | 'Dose'
+    | 'Drug-Interaction'
+    | 'Dosage-Warning'
+    | 'Formulary-Alert'
+    | 'Anomaly-Detection'
   severity: 'Critical' | 'Warning' | 'Info'
   description: string
+  reasoning?: string
 }
 
 export type Caregiver = {
@@ -49,4 +59,13 @@ export type Caregiver = {
   relation: string
   phone: string
   avatarUrl: string
+}
+
+export type AdherenceEvent = {
+  id: string
+  medicationId: string
+  medicationName: string
+  scheduledTime: string
+  status: 'Taken' | 'Missed' | 'Pending'
+  actualTime?: string
 }

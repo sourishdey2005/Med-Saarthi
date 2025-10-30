@@ -26,6 +26,7 @@ const AlertSchema = z.object({
     type: z.enum(['Drug-Interaction', 'Dosage-Warning', 'Formulary-Alert', 'Anomaly-Detection']),
     severity: z.enum(['Critical', 'Warning', 'Info']),
     description: z.string(),
+    reasoning: z.string().describe('A brief, SHAP-style explanation for why the alert was triggered, for clinician transparency.'),
 });
 
 const ReconcileMedicationsOutputSchema = z.object({
@@ -41,7 +42,7 @@ const prompt = ai.definePrompt({
   name: 'reconcileMedicationsPrompt',
   input: {schema: ReconcileMedicationsInputSchema},
   output: {schema: ReconcileMedicationsOutputSchema},
-  prompt: `You are an AI-powered Medical Safety Engine. Your task is to analyze a patient's medication list for potential risks.
+  prompt: `You are an AI-powered Medical Safety Engine. Your task is to analyze a patient's medication list for potential risks and provide clear, explainable alerts.
 
 Patient Profile:
 - Age: {{patientInfo.age}}
@@ -53,12 +54,12 @@ Medication Lists:
 - Post-Discharge: {{#each postDischargeMedications}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}
 
 Analyze the transition from pre-admission to post-discharge medications. Identify and generate alerts for the following issues:
-1.  **Anomaly Detection**: Flag any unusual or potentially dangerous changes (e.g., stopping a critical medication without a clear replacement, adding multiple drugs from the same class).
-2.  **Dosage Intelligence**: Based on the patient's age ({{patientInfo.age}}), check for medications that require dosage adjustments for senior citizens.
+1.  **Anomaly Detection**: Flag any unusual or potentially dangerous changes (e.g., stopping a critical medication like an anticoagulant without a clear replacement, adding multiple drugs from the same class).
+2.  **Dosage Intelligence**: Based on the patient's age ({{patientInfo.age}}), check for medications that require dosage adjustments for senior citizens or have specific warnings for the elderly.
 3.  **Interaction Alerts**: Check for significant interactions between the post-discharge medications. Include interactions with common Ayurvedic supplements like Ashwagandha or Turmeric if relevant.
-4.  **Formulary Alerts**: Flag if any medication is not standard for the patient's conditions.
+4.  **Formulary Alerts**: Flag if any medication is not standard first-line therapy for the patient's conditions based on Indian treatment guidelines.
 
-Generate a list of alerts with a unique ID, type, severity, and a clear, concise description for the clinician. If no significant issues are found, return an empty array for the alerts.`,
+For each alert, generate a unique ID, type, severity, a concise description, and a 'reasoning' field. The reasoning should be a SHAP-style explanation (e.g., "TRIGGER: Statin added. REASON: Patient has Unstable Angina. ACTION: Recommended first-line therapy."). If no significant issues are found, return an empty array for the alerts.`,
 });
 
 const reconcileMedicationsFlow = ai.defineFlow(

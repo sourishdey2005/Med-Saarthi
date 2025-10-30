@@ -44,6 +44,22 @@ Previous Surgeries: None.
 Family History: Father had coronary artery disease.`,
     diagnosis: 'Unstable Angina (ICD-10: I20.0)',
     followUp: 'Follow up with Dr. Mehta in Cardiology OPD after 1 week. Contact hospital at 011-23456789 for appointments.',
+    adherence: [
+        { id: 'adh1', medicationId: 'med1', medicationName: 'Metformin', scheduledTime: '2024-05-18T08:00:00', status: 'Taken', actualTime: '2024-05-18T08:05:00' },
+        { id: 'adh2', medicationId: 'med3', medicationName: 'Atorvastatin', scheduledTime: '2024-05-18T08:00:00', status: 'Taken', actualTime: '2024-05-18T08:05:00' },
+        { id: 'adh3', medicationId: 'med4', medicationName: 'Aspirin', scheduledTime: '2024-05-18T08:00:00', status: 'Taken', actualTime: '2024-05-18T08:05:00' },
+        { id: 'adh4', medicationId: 'med2', medicationName: 'Amlodipine', scheduledTime: '2024-05-18T08:00:00', status: 'Taken', actualTime: '2024-05-18T08:05:00' },
+        { id: 'adh5', medicationId: 'med1', medicationName: 'Metformin', scheduledTime: '2024-05-18T20:00:00', status: 'Missed' },
+
+        { id: 'adh6', medicationId: 'med1', medicationName: 'Metformin', scheduledTime: '2024-05-19T08:00:00', status: 'Taken', actualTime: '2024-05-19T08:15:00' },
+        { id: 'adh7', medicationId: 'med3', medicationName: 'Atorvastatin', scheduledTime: '2024-05-19T08:00:00', status: 'Taken', actualTime: '2024-05-19T08:15:00' },
+        { id: 'adh8', medicationId: 'med4', medicationName: 'Aspirin', scheduledTime: '2024-05-19T08:00:00', status: 'Taken', actualTime: '2024-05-19T08:15:00' },
+        { id: 'adh9', medicationId: 'med2', medicationName: 'Amlodipine', scheduledTime: '2024-05-19T08:00:00', status: 'Taken', actualTime: '2024-05-19T08:15:00' },
+        { id: 'adh10', medicationId: 'med1', medicationName: 'Metformin', scheduledTime: '2024-05-19T20:00:00', status: 'Pending' },
+
+        { id: 'adh11', medicationId: 'med1', medicationName: 'Metformin', scheduledTime: '2024-05-20T08:00:00', status: 'Pending' },
+        { id: 'adh12', medicationId: 'med3', medicationName: 'Atorvastatin', scheduledTime: '2024-05-20T08:00:00', status: 'Pending' },
+      ],
   },
   {
     id: '2',
@@ -61,6 +77,7 @@ Family History: Father had coronary artery disease.`,
     abhaRecord: '',
     diagnosis: '',
     followUp: '',
+    adherence: [],
   },
   {
     id: '3',
@@ -78,6 +95,7 @@ Family History: Father had coronary artery disease.`,
     abhaRecord: '',
     diagnosis: '',
     followUp: '',
+    adherence: [],
   },
   {
     id: '4',
@@ -95,6 +113,7 @@ Family History: Father had coronary artery disease.`,
     abhaRecord: '',
     diagnosis: '',
     followUp: '',
+    adherence: [],
   },
 ];
 
