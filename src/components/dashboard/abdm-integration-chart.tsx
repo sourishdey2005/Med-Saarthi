@@ -32,7 +32,7 @@ export default function AbdmIntegrationChart() {
             <XAxis dataKey="name" tickLine={false} axisLine={false} tickMargin={8} />
             <YAxis yAxisId="left" stroke="var(--color-consents)" />
             <YAxis yAxisId="right" orientation="right" stroke="var(--color-fhirSyncs)" />
-            <Tooltip content={<ChartTooltipContent />} />
+            <ChartTooltip content={<ChartTooltipContent />} />
             <Legend />
             <Bar yAxisId="left" dataKey="consents" fill="var(--color-consents)" radius={4} name="Consent %" />
             <Bar yAxisId="right" dataKey="fhirSyncs" fill="var(--color-fhirSyncs)" radius={4} name="FHIR Syncs" />
