@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
+import { Beaker } from 'lucide-react'
 
 export default function SettingsPage() {
   return (
@@ -43,6 +44,21 @@ export default function SettingsPage() {
              <div className="flex items-center justify-between">
                 <Label htmlFor="push-notifications" className="font-normal">Push Notifications</Label>
                 <Switch id="push-notifications" />
+            </div>
+          </CardContent>
+        </Card>
+         <Card>
+          <CardHeader>
+            <CardTitle>Advanced</CardTitle>
+            <CardDescription>Manage experimental features and integrations.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between rounded-lg border p-4">
+                <div>
+                    <Label htmlFor="clinical-research-mode" className="font-medium flex items-center gap-2"><Beaker /> Clinical Research Mode</Label>
+                    <p className="text-xs text-muted-foreground mt-1">Enable anonymized data consenting for clinical trials.</p>
+                </div>
+                <Switch id="clinical-research-mode" />
             </div>
           </CardContent>
         </Card>

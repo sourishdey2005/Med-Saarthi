@@ -13,7 +13,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from '@/components/ui/dialog'
-import { Bot, Loader2, Volume2, QrCode, Sparkles } from 'lucide-react'
+import { Bot, Loader2, Volume2, QrCode, Sparkles, FileCheck2 } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 import { PlaceHolderImages } from '@/lib/placeholder-images'
 import { AfternoonIcon, MorningIcon, NightIcon, WithFoodIcon } from '../icons'
@@ -267,9 +267,12 @@ export default function DischargeTab({ patient }: DischargeTabProps) {
                   </div>
                   <div className="flex flex-col sm:flex-row gap-4 items-center justify-between rounded-lg border p-4">
                       <div className="space-y-2">
-                          <h4 className="font-semibold">Verification & Guidance</h4>
-                          <AudioGuidanceDialog summary={summary} language={formState.languagePreference} />
-                          <p className="text-xs text-muted-foreground">Scan for pharmacist verification.</p>
+                          <h4 className="font-semibold">Pharmacist Bridge & Pre-Auth</h4>
+                          <p className="text-xs text-muted-foreground">Scan for safe dispensing instructions & to auto-populate insurance claims.</p>
+                           <div className="flex gap-2">
+                            <AudioGuidanceDialog summary={summary} language={formState.languagePreference} />
+                            <Button variant="secondary" size="sm"><FileCheck2 className="mr-2 h-4 w-4"/>Simulate Pre-Auth</Button>
+                           </div>
                       </div>
                        {qrCodeImage && (
                           <Image 

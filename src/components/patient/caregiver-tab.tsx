@@ -29,7 +29,7 @@ export default function CaregiverTab({ patient }: CaregiverTabProps) {
         <CardHeader className="flex flex-row items-center justify-between">
           <div>
             <CardTitle>Caregiver Information</CardTitle>
-            <CardDescription>Manage patient's support network.</CardDescription>
+            <CardDescription>Manage patient's support network and home-nurse integration.</CardDescription>
           </div>
           <Button size="sm" variant="outline">
             <PlusCircle className="mr-2 h-4 w-4" /> Add Caregiver

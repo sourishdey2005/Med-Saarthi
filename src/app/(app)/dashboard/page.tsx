@@ -6,6 +6,9 @@ import MedErrorReductionChart from '@/components/dashboard/med-error-reduction-c
 import BenchmarkRadarChart from '@/components/dashboard/benchmark-radar-chart'
 import CostReductionChart from '@/components/dashboard/cost-reduction-chart'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import HealthLiteracyMap from '@/components/dashboard/health-literacy-map'
+import CareContinuumGraph from '@/components/dashboard/care-continuum-graph'
+
 
 export default function DashboardPage() {
   return (
@@ -20,7 +23,9 @@ export default function DashboardPage() {
             <MedErrorReductionChart />
             <CostReductionChart />
             <BenchmarkRadarChart />
-            <Card className="lg:col-span-2">
+            <HealthLiteracyMap />
+            <CareContinuumGraph />
+            <Card className="lg:col-span-3">
               <CardHeader>
                 <CardTitle>Audit Log</CardTitle>
                 <CardDescription>Recent activities across the platform.</CardDescription>
