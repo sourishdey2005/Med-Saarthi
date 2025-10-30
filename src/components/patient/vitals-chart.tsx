@@ -1,7 +1,17 @@
+'use client'
+
+import React, { useState, useEffect } from 'react'
 import type { Vital } from '@/lib/types'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent } from '@/components/ui/chart'
-import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from 'recharts'
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  ChartLegend,
+  ChartLegendContent,
+} from '@/components/ui/chart'
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis, ReferenceLine } from 'recharts'
+import { add, format } from 'date-fns'
 
 interface VitalsChartProps {
   vitals: Vital[]
@@ -22,17 +32,56 @@ const chartConfig = {
   },
 }
 
-export default function VitalsChart({ vitals }: VitalsChartProps) {
-  const formattedVitals = vitals.map(v => ({
+// Function to generate a more realistic fluctuation
+const fluctuate = (value: number, amount: number) => {
+  return value + (Math.random() - 0.5) * amount
+}
+
+export default function VitalsChart({ vitals: initialVitals }: VitalsChartProps) {
+  const [vitals, setVitals] = useState(() =>
+    initialVitals.map((v) => ({
+      ...v,
+      date: new Date(v.date),
+    }))
+  )
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setVitals((currentVitals) => {
+        const lastVital = currentVitals[currentVitals.length - 1]
+        const newDate = add(lastVital.date, { days: 1 })
+
+        const newVital = {
+          date: newDate,
+          systolic: Math.round(fluctuate(lastVital.systolic, 4)),
+          diastolic: Math.round(fluctuate(lastVital.diastolic, 3)),
+          heartRate: Math.round(fluctuate(lastVital.heartRate, 2)),
+        }
+        
+        // Keep the chart to a reasonable number of data points
+        const newVitals = [...currentVitals, newVital];
+        if (newVitals.length > 10) {
+          return newVitals.slice(newVitals.length - 10);
+        }
+        return newVitals;
+      })
+    }, 2000) // Update every 2 seconds
+
+    return () => clearInterval(interval)
+  }, [])
+
+  const formattedVitals = vitals.map((v) => ({
     ...v,
-    date: new Date(v.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
+    date: format(v.date, 'MMM dd'),
   }))
-  
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Vitals Trend</CardTitle>
-        <CardDescription>Blood pressure and heart rate over the last few days.</CardDescription>
+        <CardTitle>Live Vitals Trend</CardTitle>
+        <CardDescription>
+          Simulating real-time blood pressure and heart rate monitoring.
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig} className="h-[250px] w-full">
@@ -43,37 +92,69 @@ export default function VitalsChart({ vitals }: VitalsChartProps) {
               tickLine={false}
               axisLine={false}
               tickMargin={8}
-              tickFormatter={(value) => value}
             />
             <YAxis
-                yAxisId="bp"
-                tickLine={false}
-                axisLine={false}
-                tickMargin={8}
-                domain={[60, 160]}
-                label={{ value: 'BP (mmHg)', angle: -90, position: 'insideLeft' }}
+              yAxisId="bp"
+              tickLine={false}
+              axisLine={false}
+              tickMargin={8}
+              domain={[50, 180]}
+              tickFormatter={(value) => `${value}`}
+              label={{
+                value: 'BP (mmHg)',
+                angle: -90,
+                position: 'insideLeft',
+                offset: -10,
+              }}
             />
             <YAxis
-                yAxisId="hr"
-                orientation="right"
-                tickLine={false}
-                axisLine={false}
-                tickMargin={8}
-                domain={[50, 120]}
-                label={{ value: 'HR (bpm)', angle: -90, position: 'insideRight' }}
+              yAxisId="hr"
+              orientation="right"
+              tickLine={false}
+              axisLine={false}
+              tickMargin={8}
+              domain={[40, 130]}
+              tickFormatter={(value) => `${value}`}
+              label={{
+                value: 'HR (bpm)',
+                angle: -90,
+                position: 'insideRight',
+                offset: 10,
+              }}
             />
-            <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
+            <ChartTooltip
+              cursor={false}
+              content={<ChartTooltipContent indicator="line" />}
+            />
             <ChartLegend content={<ChartLegendContent />} />
             <defs>
-                <linearGradient id="fillSystolic" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="var(--color-systolic)" stopOpacity={0.8} />
-                    <stop offset="95%" stopColor="var(--color-systolic)" stopOpacity={0.1} />
-                </linearGradient>
-                <linearGradient id="fillDiastolic" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="var(--color-diastolic)" stopOpacity={0.8} />
-                    <stop offset="95%" stopColor="var(--color-diastolic)" stopOpacity={0.1} />
-                </linearGradient>
+              <linearGradient id="fillSystolic" x1="0" y1="0" x2="0" y2="1">
+                <stop
+                  offset="5%"
+                  stopColor="var(--color-systolic)"
+                  stopOpacity={0.8}
+                />
+                <stop
+                  offset="95%"
+                  stopColor="var(--color-systolic)"
+                  stopOpacity={0.1}
+                />
+              </linearGradient>
+              <linearGradient id="fillDiastolic" x1="0" y1="0" x2="0" y2="1">
+                <stop
+                  offset="5%"
+                  stopColor="var(--color-diastolic)"
+                  stopOpacity={0.8}
+                />
+                <stop
+                  offset="95%"
+                  stopColor="var(--color-diastolic)"
+                  stopOpacity={0.1}
+                />
+              </linearGradient>
             </defs>
+            <ReferenceLine yAxisId="bp" y={140} label={{ value: 'High BP', position: 'insideTopRight' }} stroke="red" strokeDasharray="3 3" />
+            <ReferenceLine yAxisId="bp" y={90} label={{ value: 'Normal BP', position: 'insideBottomRight' }} stroke="green" strokeDasharray="3 3" />
             <Area
               yAxisId="bp"
               dataKey="systolic"
@@ -81,6 +162,7 @@ export default function VitalsChart({ vitals }: VitalsChartProps) {
               fill="url(#fillSystolic)"
               stroke="var(--color-systolic)"
               stackId="a"
+              isAnimationActive={false}
             />
             <Area
               yAxisId="bp"
@@ -89,6 +171,7 @@ export default function VitalsChart({ vitals }: VitalsChartProps) {
               fill="url(#fillDiastolic)"
               stroke="var(--color-diastolic)"
               stackId="b"
+              isAnimationActive={false}
             />
             <Area
               yAxisId="hr"
@@ -98,6 +181,7 @@ export default function VitalsChart({ vitals }: VitalsChartProps) {
               stroke="var(--color-heartRate)"
               strokeWidth={3}
               dot={true}
+              isAnimationActive={false}
             />
           </AreaChart>
         </ChartContainer>
