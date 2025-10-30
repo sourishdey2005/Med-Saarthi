@@ -50,7 +50,7 @@ export default function BenchmarkRadarChart() {
             <CartesianGrid />
             <PolarAngleAxis dataKey="metric" tick={{ fontSize: 10 }} />
             <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
-            <Tooltip content={<ChartTooltipContent />} />
+            <ChartTooltip content={<ChartTooltipContent />} />
             <Legend />
             <Radar name="Our Hospital" dataKey="hospital" stroke="var(--color-hospital)" fill="var(--color-hospital)" fillOpacity={0.6} />
             <Radar name="National Standard" dataKey="standard" stroke="var(--color-standard)" fill="var(--color-standard)" fillOpacity={0.4} />
