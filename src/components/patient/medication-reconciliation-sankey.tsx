@@ -14,18 +14,29 @@ interface MedicationReconciliationSankeyProps {
 
 const CustomTooltip = ({ active, payload }: any) => {
   if (active && payload && payload.length && payload[0].payload) {
-    const { source, target } = payload[0].payload;
+    const { source, target, value } = payload[0].payload;
+    if (value === 0) return null;
+
     let status = 'Continued';
-    if(source.name === 'Pre-Admission' && target.name !== 'Post-Discharge') {
-        status = 'Started';
-    } else if (target.name !== 'Post-Discharge' && !payload[0].payload.target.name.includes(source.name)) {
+    if (source.name === 'Pre-Admission' && target.name !== 'Post-Discharge' && !target.name.includes('Discontinued') && !payload.find((p:any) => p.payload.target.name ==='Discontinued')) {
+        const isNew = !payload[0].payload.source.payload.targetLinks.some((l:any) => l.source.name === target.name && l.target.name === 'Pre-Admission');
+        if(isNew) status = 'New';
+    }
+     else if (target.name === 'Discontinued') {
         status = 'Discontinued';
+    } else if (source.name !== 'Pre-Admission' && source.name !== 'Post-Discharge' && target.name === 'Post-Discharge' ) {
+         status = 'Continued';
     }
     
+    // Don't show tooltip for structural nodes
+    if (source.name === 'Pre-Admission' && target.name === 'Discontinued') return null;
+    if (source.name === 'Discontinued') return null;
+
+
     return (
       <div className="rounded-lg border bg-background p-2 shadow-sm">
         <div className="grid grid-cols-1 gap-1">
-            <span className="font-bold text-lg">{source.name}</span>
+            <span className="font-bold text-lg">{source.name === 'Pre-Admission' ? target.name : source.name}</span>
             <span className="text-muted-foreground">{status}</span>
         </div>
       </div>
@@ -37,6 +48,13 @@ const CustomTooltip = ({ active, payload }: any) => {
 
 export default function MedicationReconciliationSankey({ data }: MedicationReconciliationSankeyProps) {
   const chartConfig = {};
+  const nodeColors: { [key: string]: string } = {
+    'Pre-Admission': 'hsl(var(--chart-2))',
+    'Post-Discharge': 'hsl(var(--chart-1))',
+    'Discontinued': 'hsl(var(--destructive))',
+    'default': 'hsl(var(--primary))'
+  };
+
 
   return (
     <Card>
@@ -58,12 +76,8 @@ export default function MedicationReconciliationSankey({ data }: MedicationRecon
             link={{ stroke: 'hsl(var(--primary) / 0.3)', strokeWidth: 2 }}
             node={({ x, y, width, height, index, payload }) => {
               const isOut = x + width / 2 > 500 / 2;
-              const isPreAdmission = payload.name === 'Pre-Admission';
-              const isPostDischarge = payload.name === 'Post-Discharge';
-
-              let nodeColor = 'hsl(var(--primary))';
-              if (isPreAdmission) nodeColor = 'hsl(var(--chart-2))';
-              if (isPostDischarge) nodeColor = 'hsl(var(--chart-1))';
+              
+              const nodeColor = nodeColors[payload.name] || nodeColors.default;
               
               return (
                  <Layer>

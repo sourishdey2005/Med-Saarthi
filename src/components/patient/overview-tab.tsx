@@ -26,29 +26,42 @@ export default function OverviewTab({ patient }: OverviewTabProps) {
   
   const allMeds = [...new Set([...preAdmissionMeds, ...postDischargeMeds])];
   const nodes = [
-    { name: 'Pre-Admission' },
-    { name: 'Post-Discharge' },
+    { name: 'Pre-Admission' }, // 0
+    { name: 'Post-Discharge' }, // 1
+    { name: 'Discontinued' }, // 2
     ...allMeds.map(name => ({ name }))
   ];
 
+  const nodeMap = new Map(nodes.map((node, i) => [node.name, i]));
   const links: { source: number; target: number; value: number }[] = [];
 
+  const preAdmissionIndex = nodeMap.get('Pre-Admission')!;
+  const postDischargeIndex = nodeMap.get('Post-Discharge')!;
+  const discontinuedIndex = nodeMap.get('Discontinued')!;
+
+
   preAdmissionMeds.forEach(med => {
-    const medIndex = allMeds.indexOf(med) + 2;
-    links.push({ source: 0, target: medIndex, value: 1 });
+    const medIndex = nodeMap.get(med)!;
+    // From Pre-Admission to Medication
+    links.push({ source: preAdmissionIndex, target: medIndex, value: 1 });
 
     if(postDischargeMeds.includes(med)) {
-        // Continued
-        links.push({ source: medIndex, target: 1, value: 1 });
+        // Continued: From Medication to Post-Discharge
+        links.push({ source: medIndex, target: postDischargeIndex, value: 1 });
+    } else {
+        // Discontinued: From Medication to Discontinued
+        links.push({ source: medIndex, target: discontinuedIndex, value: 1 });
     }
   });
 
   postDischargeMeds.forEach(med => {
+    // New medications
     if (!preAdmissionMeds.includes(med)) {
-        // New
-        const medIndex = allMeds.indexOf(med) + 2;
-        links.push({ source: 0, target: medIndex, value: 0 }); // Show node but not from pre-admission
-        links.push({ source: medIndex, target: 1, value: 1 });
+        const medIndex = nodeMap.get(med)!;
+        // Started: From Pre-Admission to Medication
+        links.push({ source: preAdmissionIndex, target: medIndex, value: 1 });
+        // New: From Medication to Post-Discharge
+        links.push({ source: medIndex, target: postDischargeIndex, value: 1 });
     }
   });
   
