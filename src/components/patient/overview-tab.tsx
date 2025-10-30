@@ -1,3 +1,4 @@
+
 'use client'
 
 import React from 'react'
@@ -27,9 +28,9 @@ export default function OverviewTab({ patient }: OverviewTabProps) {
   
   const allMeds = [...new Set([...preAdmissionMeds, ...postDischargeMeds])];
   const nodes = [
-    { name: 'Pre-Admission' }, // 0
-    { name: 'Post-Discharge' }, // 1
-    { name: 'Discontinued' }, // 2
+    { name: 'Pre-Admission' },
+    { name: 'Post-Discharge' },
+    { name: 'Discontinued' },
     ...allMeds.map(name => ({ name }))
   ];
 
@@ -43,25 +44,20 @@ export default function OverviewTab({ patient }: OverviewTabProps) {
 
   preAdmissionMeds.forEach(med => {
     const medIndex = nodeMap.get(med)!;
-    // From Pre-Admission to Medication
     links.push({ source: preAdmissionIndex, target: medIndex, value: 1 });
 
     if(postDischargeMeds.includes(med)) {
-        // Continued: From Medication to Post-Discharge
         links.push({ source: medIndex, target: postDischargeIndex, value: 1 });
     } else {
-        // Discontinued: From Medication to Discontinued
         links.push({ source: medIndex, target: discontinuedIndex, value: 1 });
     }
   });
 
   postDischargeMeds.forEach(med => {
-    // New medications
     if (!preAdmissionMeds.includes(med)) {
         const medIndex = nodeMap.get(med)!;
-        // The value from Pre-Admission to a new med is 0 so it's invisible
+        // This link is invisible but necessary for layout
         links.push({ source: preAdmissionIndex, target: medIndex, value: 0 });
-        // New: From Medication to Post-Discharge
         links.push({ source: medIndex, target: postDischargeIndex, value: 1 });
     }
   });
