@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts'
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Legend } from 'recharts'
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '../ui/chart'
 
 const data = [
@@ -38,7 +38,7 @@ export default function CostReductionChart() {
             <YAxis 
                 tickFormatter={(value) => `₹${Number(value) / 1000}k`}
             />
-            <Tooltip content={<ChartTooltipContent formatter={(value) => `₹${value.toLocaleString()}`} />} />
+            <ChartTooltip content={<ChartTooltipContent formatter={(value) => `₹${Number(value).toLocaleString()}`} />} />
             <Legend />
             <Area type="monotone" dataKey="savings" stroke="var(--color-savings)" fill="url(#fillSavings)" />
           </AreaChart>
