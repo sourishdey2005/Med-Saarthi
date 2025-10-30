@@ -49,7 +49,7 @@ export default function VitalsChart({ vitals: initialVitals }: VitalsChartProps)
     const interval = setInterval(() => {
       setVitals((currentVitals) => {
         const lastVital = currentVitals[currentVitals.length - 1]
-        const newDate = add(lastVital.date, { days: 1 })
+        const newDate = add(lastVital.date, { seconds: 2 })
 
         const newVital = {
           date: newDate,
@@ -72,7 +72,7 @@ export default function VitalsChart({ vitals: initialVitals }: VitalsChartProps)
 
   const formattedVitals = vitals.map((v) => ({
     ...v,
-    date: format(v.date, 'MMM dd'),
+    date: format(v.date, 'HH:mm:ss'),
   }))
 
   return (
