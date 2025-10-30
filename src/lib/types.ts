@@ -22,6 +22,8 @@ export type Patient = {
   symptoms: SymptomLog[]
   egfr?: number
   lft?: string
+  healthLiteracyScore?: number
+  recoveryMilestones?: RecoveryMilestone[]
 }
 
 export type Vital = {
@@ -91,4 +93,11 @@ export type SymptomLog = {
     stress?: number; // Scale of 1-10
     mood?: number; // Scale of 1-10
     worry?: number; // Scale of 1-10
+}
+
+export type RecoveryMilestone = {
+    id: string;
+    name: string;
+    status: 'Completed' | 'In-Progress' | 'Not-Started';
+    date?: string;
 }

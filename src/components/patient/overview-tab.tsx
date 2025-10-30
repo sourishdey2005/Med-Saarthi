@@ -7,6 +7,7 @@ import { MedicalHistorySummary } from './medical-history-summary'
 import VitalsChart from './vitals-chart'
 import { AlertTriangle, Info, ShieldAlert } from 'lucide-react'
 import MedicationReconciliationSankey from './medication-reconciliation-sankey'
+import RecoveryMilestoneLadder from './recovery-milestone-ladder'
 
 interface OverviewTabProps {
   patient: Patient
@@ -58,8 +59,8 @@ export default function OverviewTab({ patient }: OverviewTabProps) {
     // New medications
     if (!preAdmissionMeds.includes(med)) {
         const medIndex = nodeMap.get(med)!;
-        // Started: From Pre-Admission to Medication
-        links.push({ source: preAdmissionIndex, target: medIndex, value: 1 });
+        // The value from Pre-Admission to a new med is 0 so it's invisible
+        links.push({ source: preAdmissionIndex, target: medIndex, value: 0 });
         // New: From Medication to Post-Discharge
         links.push({ source: medIndex, target: postDischargeIndex, value: 1 });
     }
@@ -69,8 +70,11 @@ export default function OverviewTab({ patient }: OverviewTabProps) {
 
   return (
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-      <div className="lg:col-span-2">
+       <div className="lg:col-span-2 grid gap-6">
         <MedicalHistorySummary patient={patient} />
+        {patient.recoveryMilestones && patient.recoveryMilestones.length > 0 && (
+            <RecoveryMilestoneLadder milestones={patient.recoveryMilestones} />
+        )}
       </div>
       
       <Card>

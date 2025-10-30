@@ -18,6 +18,7 @@ import { useToast } from '@/hooks/use-toast'
 import { PlaceHolderImages } from '@/lib/placeholder-images'
 import { AfternoonIcon, MorningIcon, NightIcon, WithFoodIcon } from '../icons'
 import DischargeReadinessChart from './discharge-readiness-chart'
+import HealthLiteracyGauge from './health-literacy-gauge'
 
 interface DischargeTabProps {
   patient: Patient
@@ -289,15 +290,20 @@ export default function DischargeTab({ patient }: DischargeTabProps) {
             )}
           </CardContent>
         </Card>
-         <Card>
-            <CardHeader>
-                <CardTitle>Discharge Readiness</CardTitle>
-                <CardDescription>At-a-glance view of patient's readiness for discharge.</CardDescription>
-            </CardHeader>
-            <CardContent>
-                <DischargeReadinessChart data={readinessData} />
-            </CardContent>
-        </Card>
+        <div className="grid gap-6 md:grid-cols-2">
+            <Card>
+                <CardHeader>
+                    <CardTitle>Discharge Readiness</CardTitle>
+                    <CardDescription>At-a-glance view of patient's readiness for discharge.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <DischargeReadinessChart data={readinessData} />
+                </CardContent>
+            </Card>
+             {patient.healthLiteracyScore && (
+                <HealthLiteracyGauge score={patient.healthLiteracyScore} />
+            )}
+        </div>
       </div>
     </div>
   )
