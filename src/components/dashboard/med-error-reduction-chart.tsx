@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer } from 'recharts'
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '../ui/chart'
 
 const data = [
@@ -30,7 +30,7 @@ export default function MedErrorReductionChart() {
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8}/>
             <YAxis unit="%" />
-            <Tooltip content={<ChartTooltipContent />} />
+            <ChartTooltip content={<ChartTooltipContent />} />
             <Legend />
             <Line type="monotone" dataKey="errors" stroke="var(--color-errors)" strokeWidth={3} dot={false} />
           </LineChart>
