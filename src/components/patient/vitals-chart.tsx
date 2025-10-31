@@ -11,7 +11,7 @@ import {
   ChartLegendContent,
 } from '@/components/ui/chart'
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis, ReferenceLine } from 'recharts'
-import { add, format } from 'date-fns'
+import { add, format, parseISO } from 'date-fns'
 
 interface VitalsChartProps {
   vitals: Vital[]
@@ -41,13 +41,14 @@ export default function VitalsChart({ vitals: initialVitals }: VitalsChartProps)
   const [vitals, setVitals] = useState(() =>
     initialVitals.map((v) => ({
       ...v,
-      date: new Date(v.date),
+      date: parseISO(v.date),
     }))
   )
 
   useEffect(() => {
     const interval = setInterval(() => {
       setVitals((currentVitals) => {
+        if (currentVitals.length === 0) return [];
         const lastVital = currentVitals[currentVitals.length - 1]
         const newDate = add(lastVital.date, { seconds: 2 })
 
@@ -56,12 +57,14 @@ export default function VitalsChart({ vitals: initialVitals }: VitalsChartProps)
           systolic: Math.round(fluctuate(lastVital.systolic, 4)),
           diastolic: Math.round(fluctuate(lastVital.diastolic, 3)),
           heartRate: Math.round(fluctuate(lastVital.heartRate, 2)),
+          glucose: lastVital.glucose ? Math.round(fluctuate(lastVital.glucose, 5)) : undefined,
+          weight: lastVital.weight ? fluctuate(lastVital.weight, 0.1) : undefined,
         }
         
         // Keep the chart to a reasonable number of data points
         const newVitals = [...currentVitals, newVital];
-        if (newVitals.length > 10) {
-          return newVitals.slice(newVitals.length - 10);
+        if (newVitals.length > 20) {
+          return newVitals.slice(newVitals.length - 20);
         }
         return newVitals;
       })

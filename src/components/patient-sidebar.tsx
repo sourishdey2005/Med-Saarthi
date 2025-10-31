@@ -23,6 +23,7 @@ import {
   Pill,
   Users,
   BookHeart,
+  ClipboardCheck,
 } from 'lucide-react'
 
 export function PatientSidebar() {
@@ -49,6 +50,11 @@ export function PatientSidebar() {
         href: '/patient/dashboard/symptoms',
         label: 'Symptom Diary',
         icon: BookHeart,
+    },
+    {
+        href: '/patient/dashboard/adherence',
+        label: 'My Adherence',
+        icon: ClipboardCheck,
     },
     {
       href: '/patient/dashboard/caregivers',
