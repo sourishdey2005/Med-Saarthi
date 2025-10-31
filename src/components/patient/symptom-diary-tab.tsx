@@ -12,7 +12,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Bot, Loader2, Siren, ShieldAlert, AlertTriangle, Info } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { format, parseISO } from 'date-fns';
-import { Area, AreaChart, CartesianGrid, Legend, XAxis, YAxis } from 'recharts';
+import { Area, AreaChart, CartesianGrid, Legend, XAxis, YAxis, Tooltip } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 
 interface SymptomDiaryTabProps {

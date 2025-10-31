@@ -2,7 +2,7 @@
 'use client';
 
 import React from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, PieChart, Pie, Cell } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Legend, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, PieChart, Pie, Cell, Tooltip } from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import type { Alert } from '@/lib/types';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '../ui/chart';

@@ -11,10 +11,14 @@ import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const SymptomSchema = z.object({
+  id: z.string(),
   date: z.string(),
   symptom: z.string(),
   severity: z.string(),
   notes: z.string(),
+  stress: z.number().optional(),
+  mood: z.number().optional(),
+  worry: z.number().optional(),
 });
 
 const TriageSymptomsInputSchema = z.object({
