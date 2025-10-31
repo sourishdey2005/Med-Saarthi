@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from 'react';
@@ -38,7 +39,7 @@ export default function HealthLiteracyGauge({ score }: HealthLiteracyGaugeProps)
         <CardTitle>Health Literacy Score</CardTitle>
         <CardDescription>Patient's estimated ability to comprehend health info.</CardDescription>
       </CardHeader>
-      <CardContent className="flex flex-col items-center justify-center">
+      <CardContent className="flex flex-col items-center justify-center relative">
         <ChartContainer config={chartConfig} className="h-[200px] w-full">
           <RadialBarChart
             data={chartData}
@@ -61,7 +62,7 @@ export default function HealthLiteracyGauge({ score }: HealthLiteracyGaugeProps)
             />
           </RadialBarChart>
         </ChartContainer>
-        <div className="text-center -mt-16">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center">
             <p className="text-3xl font-bold">{score}</p>
             <p className="text-sm font-medium" style={{color: getScoreColor(score)}}>
                 {literacyLevel}
