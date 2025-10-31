@@ -9,7 +9,7 @@ interface ClinicalRiskHeatmapProps {
   patient: Patient;
 }
 
-const timeSlots = ['Morning', 'Afternoon', 'Evening', 'Night'];
+const timeSlots = ['Morning', 'Afternoon', 'Night'];
 
 // More realistic risk scoring logic
 const getRiskScore = (medName: string, time: string, patient: Patient) => {
@@ -76,9 +76,10 @@ export default function ClinicalRiskHeatmap({ patient }: ClinicalRiskHeatmapProp
                 <TableRow key={medName}>
                   <TableCell className="font-medium">{medName}</TableCell>
                   {timeSlots.map((time) => {
-                    const risk = getRiskScore(medName, time, patient);
+                    const hasMedicationForTime = medications.some(m => m.name === medName && m.frequency.toLowerCase().includes(time.toLowerCase()));
+                    const risk = hasMedicationForTime ? getRiskScore(medName, time, patient) : 0;
                     return (
-                      <TableCell key={time} className={`text-center ${getRiskColor(risk)}`}>
+                      <TableCell key={time} className={`text-center ${risk > 0 ? getRiskColor(risk) : ''}`}>
                         <div className="flex h-12 w-full items-center justify-center rounded-md">
                            {/* Intentionally left blank to create a heatmap cell */}
                         </div>

@@ -24,14 +24,14 @@ export const patients: Patient[] = [
       ],
       postDischarge: [
         { id: 'med1', name: 'Metformin', dosage: '500 mg', frequency: 'Twice a day', route: 'Oral', status: 'Unchanged' },
-        { id: 'med3', name: 'Atorvastatin', dosage: '20 mg', frequency: 'Once a day', route: 'Oral', status: 'New' },
-        { id: 'med4', name: 'Aspirin', dosage: '75 mg', frequency: 'Once a day', route: 'Oral', status: 'New' },
-        { id: 'med2', name: 'Amlodipine', dosage: '10 mg', frequency: 'Once a day', route: 'Oral', status: 'Changed' },
+        { id: 'med3', name: 'Atorvastatin', dosage: '20 mg', frequency: 'Once a day at Night', route: 'Oral', status: 'New' },
+        { id: 'med4', name: 'Aspirin', dosage: '75 mg', frequency: 'Once a day in Morning', route: 'Oral', status: 'New' },
+        { id: 'med2', name: 'Amlodipine', dosage: '10 mg', frequency: 'Once a day in Morning', route: 'Oral', status: 'Changed' },
       ],
     },
     alerts: [
-      { id: 'alert1', type: 'Drug-Drug', severity: 'Warning', description: 'Aspirin and Warfarin have a potential interaction. Monitor INR levels.' },
-      { id: 'alert2', type: 'Dose', severity: 'Info', description: 'Amlodipine dose increased from 5mg to 10mg.' },
+       { id: 'alert1', type: 'Drug-Interaction', severity: 'Critical', description: 'Aspirin and Warfarin have a potential interaction', mechanism: 'Increased Bleeding Risk', reasoning: 'TRIGGER: Both Aspirin and Warfarin are anticoagulants. REASON: Their combined use significantly increases the risk of major bleeding. ACTION: Re-evaluate the need for dual therapy or implement strict INR monitoring.' },
+       { id: 'alert3', type: 'Drug-Interaction', severity: 'Warning', description: 'Atorvastatin and Amlodipine have a potential interaction', mechanism: 'CYP3A4 Inhibition', reasoning: 'TRIGGER: Amlodipine is a weak inhibitor of CYP3A4. REASON: It can slightly increase the concentration of Atorvastatin, raising the risk of myopathy. ACTION: Monitor for muscle pain or weakness.'}
     ],
     caregivers: [
       { id: 'care1', name: 'Rohan Sharma', relation: 'Son', phone: '+91-9876543210', avatarUrl: 'https://picsum.photos/seed/caregiver1/100/100', comprehensionStatus: 'Acknowledged' },
@@ -129,7 +129,7 @@ Family History: Father had coronary artery disease.`,
     avatarUrl: 'https://picsum.photos/seed/patient4/100/100',
     vitals: [],
     medications: { preAdmission: [], postDischarge: [] },
-    alerts: [{id: 'alert-ped', type: 'Dose', severity: 'Critical', description: 'High-risk medication for elderly. Verify dosage.'}],
+    alerts: [{id: 'alert-ped', type: 'Dosage-Warning', severity: 'Critical', description: 'High-risk medication for elderly. Verify dosage.'}],
     caregivers: [],
     abhaRecord: '',
     diagnosis: '',

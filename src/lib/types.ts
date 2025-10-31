@@ -23,7 +23,7 @@ export type Patient = {
   egfr?: number
   lft?: string
   healthLiteracyScore?: number
-  recoveryMilestones?: RecoveryMilestone[]
+  recoveryMilestones: RecoveryMilestone[]
 }
 
 export type Vital = {

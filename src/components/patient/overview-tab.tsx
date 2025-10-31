@@ -76,7 +76,7 @@ export default function OverviewTab({ patient }: OverviewTabProps) {
                 <li key={alert.id} className="flex items-start gap-4">
                   <div>{alertIcons[alert.severity]}</div>
                   <div>
-                    <p className="font-semibold">{alert.type}</p>
+                    <p className="font-semibold">{alert.type.replace(/-/g, ' ')}</p>
                     <p className="text-sm text-muted-foreground">{alert.description}</p>
                   </div>
                 </li>
