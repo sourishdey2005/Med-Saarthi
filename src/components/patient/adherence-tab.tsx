@@ -4,7 +4,7 @@
 import React from 'react';
 import type { Patient, AdherenceEvent, Vital } from '@/lib/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { CheckCircle2, XCircle, Hourglass, CalendarDays, BarChart, BellRing, TrendingUp, HeartPulse } from 'lucide-react';
+import { CheckCircle2, XCircle, Hourglass, CalendarDays, BarChart, BellRing } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Table, TableBody, TableCell, TableHeader, TableHead, TableRow } from '@/components/ui/table';

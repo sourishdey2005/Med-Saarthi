@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, Legend, ResponsiveContainer, CartesianGrid } from 'recharts'
+import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, Legend, ResponsiveContainer } from 'recharts'
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '../ui/chart'
 
 const data = [
@@ -47,7 +47,6 @@ export default function BenchmarkRadarChart() {
       <CardContent>
         <ChartContainer config={chartConfig} className="h-[200px] w-full">
             <RadarChart data={normalizedData}>
-            <CartesianGrid />
             <PolarAngleAxis dataKey="metric" tick={{ fontSize: 10 }} />
             <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
             <ChartTooltip content={<ChartTooltipContent />} />

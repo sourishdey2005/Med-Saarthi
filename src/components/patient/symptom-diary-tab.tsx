@@ -8,11 +8,11 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Bot, Loader2, Siren, ShieldAlert, AlertTriangle, Info, TrendingUp } from 'lucide-react';
+import { Bot, Loader2, Siren, ShieldAlert, AlertTriangle, Info } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { format, parseISO } from 'date-fns';
-import { Area, AreaChart, CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent } from '@/components/ui/chart';
+import { Area, AreaChart, CartesianGrid, Legend, ResponsiveContainer } from 'recharts';
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 
 interface SymptomDiaryTabProps {
   patient: Patient;
@@ -76,7 +76,7 @@ const MentalWellbeingChart = ({ symptoms }: { symptoms: SymptomLog[] }) => {
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis dataKey="date" />
                         <YAxis domain={[0, 10]} />
-                        <Tooltip content={<ChartTooltipContent />} />
+                        <ChartTooltip content={<ChartTooltipContent />} />
                         <Legend />
                         <Area type="monotone" dataKey="Stress" stroke="var(--color-Stress)" fill="url(#fillStress)" />
                         <Area type="monotone" dataKey="Mood" stroke="var(--color-Mood)" fill="url(#fillMood)" />
